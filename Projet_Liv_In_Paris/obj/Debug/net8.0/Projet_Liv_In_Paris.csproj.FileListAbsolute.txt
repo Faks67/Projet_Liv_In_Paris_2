@@ -12,3 +12,4 @@
 /Users/Codage/C#/Projet_Liv_In_Paris/Projet_Liv_In_Paris/obj/Debug/net8.0/Projet_Liv_In_Paris.pdb
 /Users/Codage/C#/Projet_Liv_In_Paris/Projet_Liv_In_Paris/obj/Debug/net8.0/Projet_Liv_In_Paris.genruntimeconfig.cache
 /Users/Codage/C#/Projet_Liv_In_Paris/Projet_Liv_In_Paris/obj/Debug/net8.0/ref/Projet_Liv_In_Paris.dll
+/Users/Codage/C#/Projet_Liv_In_Paris/Projet_Liv_In_Paris/obj/Debug/net8.0/Projet_Liv_In_Paris.sourcelink.json
