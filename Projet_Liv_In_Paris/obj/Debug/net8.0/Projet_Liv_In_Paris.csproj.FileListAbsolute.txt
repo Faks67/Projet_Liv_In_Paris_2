@@ -1,0 +1,14 @@
+/Users/Codage/C#/Projet_Liv_In_Paris/Projet_Liv_In_Paris/bin/Debug/net8.0/Projet_Liv_In_Paris
+/Users/Codage/C#/Projet_Liv_In_Paris/Projet_Liv_In_Paris/bin/Debug/net8.0/Projet_Liv_In_Paris.deps.json
+/Users/Codage/C#/Projet_Liv_In_Paris/Projet_Liv_In_Paris/bin/Debug/net8.0/Projet_Liv_In_Paris.runtimeconfig.json
+/Users/Codage/C#/Projet_Liv_In_Paris/Projet_Liv_In_Paris/bin/Debug/net8.0/Projet_Liv_In_Paris.dll
+/Users/Codage/C#/Projet_Liv_In_Paris/Projet_Liv_In_Paris/bin/Debug/net8.0/Projet_Liv_In_Paris.pdb
+/Users/Codage/C#/Projet_Liv_In_Paris/Projet_Liv_In_Paris/obj/Debug/net8.0/Projet_Liv_In_Paris.GeneratedMSBuildEditorConfig.editorconfig
+/Users/Codage/C#/Projet_Liv_In_Paris/Projet_Liv_In_Paris/obj/Debug/net8.0/Projet_Liv_In_Paris.AssemblyInfoInputs.cache
+/Users/Codage/C#/Projet_Liv_In_Paris/Projet_Liv_In_Paris/obj/Debug/net8.0/Projet_Liv_In_Paris.AssemblyInfo.cs
+/Users/Codage/C#/Projet_Liv_In_Paris/Projet_Liv_In_Paris/obj/Debug/net8.0/Projet_Liv_In_Paris.csproj.CoreCompileInputs.cache
+/Users/Codage/C#/Projet_Liv_In_Paris/Projet_Liv_In_Paris/obj/Debug/net8.0/Projet_Liv_In_Paris.dll
+/Users/Codage/C#/Projet_Liv_In_Paris/Projet_Liv_In_Paris/obj/Debug/net8.0/refint/Projet_Liv_In_Paris.dll
+/Users/Codage/C#/Projet_Liv_In_Paris/Projet_Liv_In_Paris/obj/Debug/net8.0/Projet_Liv_In_Paris.pdb
+/Users/Codage/C#/Projet_Liv_In_Paris/Projet_Liv_In_Paris/obj/Debug/net8.0/Projet_Liv_In_Paris.genruntimeconfig.cache
+/Users/Codage/C#/Projet_Liv_In_Paris/Projet_Liv_In_Paris/obj/Debug/net8.0/ref/Projet_Liv_In_Paris.dll
