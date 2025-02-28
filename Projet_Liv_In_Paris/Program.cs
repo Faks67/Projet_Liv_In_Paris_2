@@ -20,3 +20,4 @@
         Console.WriteLine("\nLe graphe est-il connexe ? " + graphe.EstConnexe());
     }
 }
+//test
