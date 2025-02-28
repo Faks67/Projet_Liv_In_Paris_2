@@ -13,11 +13,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/Users/Codage/C#/Projet_Liv_In_Paris/Projet_Liv_In_Paris/Projet_Liv_In_Paris.csproj",
+      "projectUniqueName": "/Users/keenishussain/Liv-in-Paris/Projet_Liv_In_Paris/Projet_Liv_In_Paris/Projet_Liv_In_Paris.csproj",
       "projectName": "Projet_Liv_In_Paris",
-      "projectPath": "/Users/Codage/C#/Projet_Liv_In_Paris/Projet_Liv_In_Paris/Projet_Liv_In_Paris.csproj",
+      "projectPath": "/Users/keenishussain/Liv-in-Paris/Projet_Liv_In_Paris/Projet_Liv_In_Paris/Projet_Liv_In_Paris.csproj",
       "packagesPath": "/Users/keenishussain/.nuget/packages/",
-      "outputPath": "/Users/Codage/C#/Projet_Liv_In_Paris/Projet_Liv_In_Paris/obj/",
+      "outputPath": "/Users/keenishussain/Liv-in-Paris/Projet_Liv_In_Paris/Projet_Liv_In_Paris/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "/Users/keenishussain/.nuget/NuGet/NuGet.Config"
