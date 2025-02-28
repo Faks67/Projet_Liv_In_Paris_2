@@ -1,6 +1,7 @@
 {
   "format": 1,
   "restore": {
+<<<<<<< HEAD
     "/Users/keenishussain/Liv-in-Paris/Projet_Liv_In_Paris/Projet_Liv_In_Paris/Projet_Liv_In_Paris.csproj": {}
   },
   "projects": {
@@ -12,14 +13,33 @@
         "projectPath": "/Users/keenishussain/Liv-in-Paris/Projet_Liv_In_Paris/Projet_Liv_In_Paris/Projet_Liv_In_Paris.csproj",
         "packagesPath": "/Users/keenishussain/.nuget/packages/",
         "outputPath": "/Users/keenishussain/Liv-in-Paris/Projet_Liv_In_Paris/Projet_Liv_In_Paris/obj/",
+=======
+    "C:\\Users\\alexa\\Documents\\Esilv\\A2\\S2\\PB scientifique et informatique\\Projet_Liv_In_Paris\\Projet_Liv_In_Paris\\Projet_Liv_In_Paris.csproj": {}
+  },
+  "projects": {
+    "C:\\Users\\alexa\\Documents\\Esilv\\A2\\S2\\PB scientifique et informatique\\Projet_Liv_In_Paris\\Projet_Liv_In_Paris\\Projet_Liv_In_Paris.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\alexa\\Documents\\Esilv\\A2\\S2\\PB scientifique et informatique\\Projet_Liv_In_Paris\\Projet_Liv_In_Paris\\Projet_Liv_In_Paris.csproj",
+        "projectName": "Projet_Liv_In_Paris",
+        "projectPath": "C:\\Users\\alexa\\Documents\\Esilv\\A2\\S2\\PB scientifique et informatique\\Projet_Liv_In_Paris\\Projet_Liv_In_Paris\\Projet_Liv_In_Paris.csproj",
+        "packagesPath": "C:\\Users\\alexa\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\alexa\\Documents\\Esilv\\A2\\S2\\PB scientifique et informatique\\Projet_Liv_In_Paris\\Projet_Liv_In_Paris\\obj\\",
+>>>>>>> refs/remotes/origin/main
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
         "configFilePaths": [
-          "/Users/keenishussain/.nuget/NuGet/NuGet.Config"
+          "C:\\Users\\alexa\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "net8.0"
         ],
         "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -58,7 +78,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/8.0.403/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.403/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

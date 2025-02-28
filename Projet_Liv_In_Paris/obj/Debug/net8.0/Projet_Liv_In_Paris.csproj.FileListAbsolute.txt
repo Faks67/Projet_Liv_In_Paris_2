@@ -13,6 +13,7 @@
 /Users/Codage/C#/Projet_Liv_In_Paris/Projet_Liv_In_Paris/obj/Debug/net8.0/Projet_Liv_In_Paris.genruntimeconfig.cache
 /Users/Codage/C#/Projet_Liv_In_Paris/Projet_Liv_In_Paris/obj/Debug/net8.0/ref/Projet_Liv_In_Paris.dll
 /Users/Codage/C#/Projet_Liv_In_Paris/Projet_Liv_In_Paris/obj/Debug/net8.0/Projet_Liv_In_Paris.sourcelink.json
+<<<<<<< HEAD
 /Users/keenishussain/Liv-in-Paris/Projet_Liv_In_Paris/Projet_Liv_In_Paris/bin/Debug/net8.0/Projet_Liv_In_Paris
 /Users/keenishussain/Liv-in-Paris/Projet_Liv_In_Paris/Projet_Liv_In_Paris/bin/Debug/net8.0/Projet_Liv_In_Paris.deps.json
 /Users/keenishussain/Liv-in-Paris/Projet_Liv_In_Paris/Projet_Liv_In_Paris/bin/Debug/net8.0/Projet_Liv_In_Paris.runtimeconfig.json
@@ -28,3 +29,20 @@
 /Users/keenishussain/Liv-in-Paris/Projet_Liv_In_Paris/Projet_Liv_In_Paris/obj/Debug/net8.0/Projet_Liv_In_Paris.pdb
 /Users/keenishussain/Liv-in-Paris/Projet_Liv_In_Paris/Projet_Liv_In_Paris/obj/Debug/net8.0/Projet_Liv_In_Paris.genruntimeconfig.cache
 /Users/keenishussain/Liv-in-Paris/Projet_Liv_In_Paris/Projet_Liv_In_Paris/obj/Debug/net8.0/ref/Projet_Liv_In_Paris.dll
+=======
+C:\Users\alexa\Documents\Esilv\A2\S2\PB scientifique et informatique\Projet_Liv_In_Paris\Projet_Liv_In_Paris\bin\Debug\net8.0\Projet_Liv_In_Paris.exe
+C:\Users\alexa\Documents\Esilv\A2\S2\PB scientifique et informatique\Projet_Liv_In_Paris\Projet_Liv_In_Paris\bin\Debug\net8.0\Projet_Liv_In_Paris.deps.json
+C:\Users\alexa\Documents\Esilv\A2\S2\PB scientifique et informatique\Projet_Liv_In_Paris\Projet_Liv_In_Paris\bin\Debug\net8.0\Projet_Liv_In_Paris.runtimeconfig.json
+C:\Users\alexa\Documents\Esilv\A2\S2\PB scientifique et informatique\Projet_Liv_In_Paris\Projet_Liv_In_Paris\bin\Debug\net8.0\Projet_Liv_In_Paris.dll
+C:\Users\alexa\Documents\Esilv\A2\S2\PB scientifique et informatique\Projet_Liv_In_Paris\Projet_Liv_In_Paris\bin\Debug\net8.0\Projet_Liv_In_Paris.pdb
+C:\Users\alexa\Documents\Esilv\A2\S2\PB scientifique et informatique\Projet_Liv_In_Paris\Projet_Liv_In_Paris\obj\Debug\net8.0\Projet_Liv_In_Paris.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\alexa\Documents\Esilv\A2\S2\PB scientifique et informatique\Projet_Liv_In_Paris\Projet_Liv_In_Paris\obj\Debug\net8.0\Projet_Liv_In_Paris.AssemblyInfoInputs.cache
+C:\Users\alexa\Documents\Esilv\A2\S2\PB scientifique et informatique\Projet_Liv_In_Paris\Projet_Liv_In_Paris\obj\Debug\net8.0\Projet_Liv_In_Paris.AssemblyInfo.cs
+C:\Users\alexa\Documents\Esilv\A2\S2\PB scientifique et informatique\Projet_Liv_In_Paris\Projet_Liv_In_Paris\obj\Debug\net8.0\Projet_Liv_In_Paris.csproj.CoreCompileInputs.cache
+C:\Users\alexa\Documents\Esilv\A2\S2\PB scientifique et informatique\Projet_Liv_In_Paris\Projet_Liv_In_Paris\obj\Debug\net8.0\Projet_Liv_In_Paris.sourcelink.json
+C:\Users\alexa\Documents\Esilv\A2\S2\PB scientifique et informatique\Projet_Liv_In_Paris\Projet_Liv_In_Paris\obj\Debug\net8.0\Projet_Liv_In_Paris.dll
+C:\Users\alexa\Documents\Esilv\A2\S2\PB scientifique et informatique\Projet_Liv_In_Paris\Projet_Liv_In_Paris\obj\Debug\net8.0\refint\Projet_Liv_In_Paris.dll
+C:\Users\alexa\Documents\Esilv\A2\S2\PB scientifique et informatique\Projet_Liv_In_Paris\Projet_Liv_In_Paris\obj\Debug\net8.0\Projet_Liv_In_Paris.pdb
+C:\Users\alexa\Documents\Esilv\A2\S2\PB scientifique et informatique\Projet_Liv_In_Paris\Projet_Liv_In_Paris\obj\Debug\net8.0\Projet_Liv_In_Paris.genruntimeconfig.cache
+C:\Users\alexa\Documents\Esilv\A2\S2\PB scientifique et informatique\Projet_Liv_In_Paris\Projet_Liv_In_Paris\obj\Debug\net8.0\ref\Projet_Liv_In_Paris.dll
+>>>>>>> refs/remotes/origin/main
