@@ -1,14 +1,15 @@
 {
   "version": 2,
-<<<<<<< HEAD
   "dgSpecHash": "1Jg2nmOmvro=",
   "success": true,
   "projectFilePath": "/Users/keenishussain/Liv-in-Paris/Projet_Liv_In_Paris/Projet_Liv_In_Paris/Projet_Liv_In_Paris.csproj",
-=======
-  "dgSpecHash": "H3uNuUeQBqI=",
-  "success": true,
-  "projectFilePath": "C:\\Users\\alexa\\Documents\\Esilv\\A2\\S2\\PB scientifique et informatique\\Projet_Liv_In_Paris\\Projet_Liv_In_Paris\\Projet_Liv_In_Paris.csproj",
->>>>>>> refs/remotes/origin/main
   "expectedPackageFiles": [],
-  "logs": []
+  "logs": [
+    {
+      "code": "Undefined",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "Problem reading the cache file /Users/keenishussain/Liv-in-Paris/Projet_Liv_In_Paris/Projet_Liv_In_Paris/obj/project.nuget.cache : Invalid property identifier character: <. Path 'version', line 3, position 0."
+    }
+  ]
 }
