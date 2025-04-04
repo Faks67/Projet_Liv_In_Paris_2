@@ -84,4 +84,61 @@ public class Cuisinier
                 Console.WriteLine($"ID: {reader["idClient"]}, Zone: {reader["ZoneDeLivraison"]}, Station: {reader["StationProche"]}");
             }
     }
+    public void AfficherClient(MySqlConnection conn)
+    {
+        Console.Write("Entrez l'ID du cuisinier : ");
+        string idCuisinier = Console.ReadLine();
+        Console.Write("Voulez-vous afficher les clients depuis l'inscription (1) ou pendant une période spécifique (2) ? ");
+        string choix = Console.ReadLine();
+        DateTime? startDate = null;
+        DateTime? endDate = null;
+        string query = "SELECT DISTINCT c.idClient, c.nom, c.prenom, co.dateCommande " +
+                   "FROM Client c " +
+                   "JOIN Commande co ON c.idClient = co.idClient " +
+                   "JOIN Cuisinier cu ON co.idCuisinier = cu.idCuisinier " +
+                   "WHERE cu.idCuisinier = @idCuisinier";
+        if (choix == "2")
+        {
+        Console.Write("Entrez la date de début (yyyy-MM-dd) : ");
+        startDate = DateTime.Parse(Console.ReadLine());
+        Console.Write("Entrez la date de fin (yyyy-MM-dd) : ");
+        endDate = DateTime.Parse(Console.ReadLine());
+        query += " AND co.dateCommande BETWEEN @startDate AND @endDate";
+        }
+        using var cmd = new MySqlCommand(query, conn);
+        if (startDate.HasValue) cmd.Parameters.AddWithValue("@startDate", startDate.Value);
+        if (endDate.HasValue) cmd.Parameters.AddWithValue("@endDate", endDate.Value);
+        using var reader = cmd.ExecuteReader();
+        while (reader.Read())
+        {
+            Console.WriteLine($"Client ID: {reader["idClient"]}, Nom: {reader["nom"]} {reader["prenom"]}, Date: {reader["dateCommande"]}");
+        }
+    }
+    public void platRealiser(MySqlConnection conn)
+    {
+        Console.Write("Entrez l'ID du cuisinier : ");
+        string idCuisinier = Console.ReadLine();
+        string query = "SELECT p.nomPlat, COUNT(*) as frequence " +
+                    "FROM Commande c " +
+                    "JOIN Plat p ON c.idPlat = p.idPlat " +
+                    "WHERE c.idCuisinier = @idCuisinier " +
+                    "GROUP BY p.nomPlat " +
+                    "ORDER BY frequence DESC";
+        using var cmd = new MySqlCommand(query, conn);
+        cmd.Parameters.AddWithValue("@idCuisinier", idCuisinier);
+
+        using var reader = cmd.ExecuteReader();
+        if (!reader.HasRows)
+        {
+            Console.WriteLine("Aucun plat trouvé pour ce cuisinier.");
+            return;
+        }
+
+        Console.WriteLine("Plats réalisés par fréquence :");
+        while (reader.Read())
+        {
+            Console.WriteLine($"Plat: {reader["nomPlat"]}, Nombre de fois préparé: {reader["frequence"]}");
+        }
+    }
+
 }

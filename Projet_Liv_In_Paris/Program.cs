@@ -99,7 +99,7 @@ class Program
             cuisinier.SupprimerCuisinier(conn);
             break;
             case "4":
-            cuisinier.AffichierClient(conn);
+            cuisinier.AfficherClient(conn);
             break;
             case "5":
             cuisinier.platRealiser(conn);
