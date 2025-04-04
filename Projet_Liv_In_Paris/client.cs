@@ -3,6 +3,10 @@ using MySql.Data.MySqlClient;
 
 public class Client
 {
+    /// <summary>
+    /// Permet d'ajouter un client a la base de donnée client
+    /// </summary>
+    /// <param name="conn"></param>
     public void AjouterClient(MySqlConnection conn)
     {
         Console.Write("Entrez l'ID du client : ");
@@ -33,33 +37,44 @@ public class Client
         cmd.ExecuteNonQuery();
         Console.WriteLine("Client ajouté !");
     }
+    /// <summary>
+    /// Permet de modifier un client
+    /// </summary>
+    /// <param name="conn"></param>
     public void ModifierClient(MySqlConnection conn)
-        {
-            Console.Write("Entrez l'ID du client : ");
-            string IdClient = Console.ReadLine();
-            Console.Write("Entrez la zone de livraison : ");
-            string ZoneDeLivraison = Console.ReadLine();
-            Console.Write("Entrez la station proche : ");
-            string StationProche = Console.ReadLine();
-            Console.Write("Entrez l'ID de la transaction : ");
-            int IdTransaction = int.Parse(Console.ReadLine());
-            var cmd  = new MySqlCommand("UPDATE Client SET ZoneDeLivraison = @zone, StationProche = @station, idTransaction = @idTransaction WHERE idClient = @idClient", conn);
-            cmd.Parameters.AddWithValue("@idClient", IdClient);
-            cmd.Parameters.AddWithValue("@zone", ZoneDeLivraison);
-            cmd.Parameters.AddWithValue("@station", StationProche);
-            cmd.Parameters.AddWithValue("@idTransaction", IdTransaction);
-            cmd.ExecuteNonQuery();
-            Console.WriteLine("Client modifié");
-        }
-        public void SupprimerClient(MySqlConnection conn)
-        {
-            Console.Write("Entrez l'ID du client : ");
-            string idClient = Console.ReadLine();
-            var cmd = new MySqlCommand("DELETE FROM Client WHERE idClient = @idClient", conn);
-            cmd.Parameters.AddWithValue("@idClient", idClient);
-            cmd.ExecuteNonQuery();
-        }
-
+    {
+        Console.Write("Entrez l'ID du client : ");
+        string IdClient = Console.ReadLine();
+        Console.Write("Entrez la zone de livraison : ");
+        string ZoneDeLivraison = Console.ReadLine();
+        Console.Write("Entrez la station proche : ");
+        string StationProche = Console.ReadLine();
+        Console.Write("Entrez l'ID de la transaction : ");
+        int IdTransaction = int.Parse(Console.ReadLine());
+        var cmd  = new MySqlCommand("UPDATE Client SET ZoneDeLivraison = @zone, StationProche = @station, idTransaction = @idTransaction WHERE idClient = @idClient", conn);
+        cmd.Parameters.AddWithValue("@idClient", IdClient);
+        cmd.Parameters.AddWithValue("@zone", ZoneDeLivraison);
+        cmd.Parameters.AddWithValue("@station", StationProche);
+        cmd.Parameters.AddWithValue("@idTransaction", IdTransaction);
+        cmd.ExecuteNonQuery();
+        Console.WriteLine("Client modifié");
+    }
+    /// <summary>
+    /// Permet de supprimer un client
+    /// </summary>
+    /// <param name="conn"></param>
+    public void SupprimerClient(MySqlConnection conn)
+    {
+        Console.Write("Entrez l'ID du client : ");
+        string idClient = Console.ReadLine();
+        var cmd = new MySqlCommand("DELETE FROM Client WHERE idClient = @idClient", conn);
+        cmd.Parameters.AddWithValue("@idClient", idClient);
+        cmd.ExecuteNonQuery();
+    }
+    /// <summary>
+    /// Permet d'afficher les clients en ordre alphabetique
+    /// </summary>
+    /// <param name="conn"></param>
     public void AfficherClientsAlphabetique(MySqlConnection conn)
     {
 
@@ -71,6 +86,10 @@ public class Client
             }
         
     }
+    /// <summary>
+    /// Permet d'afficher les clients en les regroupant par nom de rue
+    /// </summary>
+    /// <param name="conn"></param>
     public void AfficherClientsRue(MySqlConnection conn)
     {
 
@@ -82,6 +101,10 @@ public class Client
             }
         
     }
+    /// <summary>
+    /// Permet d'affiche le total d'argent depensé en commande en ordre descendant des clients
+    /// </summary>
+    /// <param name="conn"></param>
     public void AfficherTotalCommandesParClient(MySqlConnection conn)
     {
             string query = "SELECT idClient, SUM(prix) AS Total FROM Commande GROUP BY idClient ORDER BY Total DESC";

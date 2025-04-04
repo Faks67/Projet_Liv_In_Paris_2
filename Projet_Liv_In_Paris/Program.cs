@@ -115,7 +115,7 @@ class Program
     public static void GestionCommande(MySqlConnection conn)
     {
         Commande commande = new Commande();
-        Console.WriteLine("Que souhaitez vois faire ?\n1 - Afficher le prix d'une commande\n2 - Determiner le chemin a parcourir en fonction des station\nQuitter");
+        Console.WriteLine("Que souhaitez vois faire ?\n1 - Afficher le prix d'une commande\n2 - Determiner le chemin a parcourir en fonction des station\n3 - Créer une commande\nQuitter");
         string choix = Console.ReadLine();
         switch (choix)
         {
@@ -123,6 +123,9 @@ class Program
             commande.AfficheCommandeParty(conn);
             break;
             case "2":
+            break;
+            case "3":
+            commande.CreerCommande(conn);
             break;
             default :
             Environment.Exit(0);

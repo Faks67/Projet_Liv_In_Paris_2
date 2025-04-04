@@ -3,6 +3,10 @@ using MySql.Data.MySqlClient;
 
 public class Commande
 {
+    /// <summary>
+    /// Permet de créer une commande
+    /// </summary>
+    /// <param name="conn"></param>
     public void CreerCommande(MySqlConnection conn)
         {
             Console.Write("Entrez l'ID de la commande : ");
@@ -27,6 +31,10 @@ public class Commande
             cmd.Parameters.AddWithValue("@arrive", arrive);
             cmd.ExecuteNonQuery();               
         }   
+        /// <summary>
+        /// Permet d'afficher les commandes
+        /// </summary>
+        /// <param name="conn"></param>
     public void AfficheCommande(MySqlConnection conn)
     {
         var cmd = new MySqlCommand("SELECT *  FROM Commande ORDER BY adresse ASC", conn);
@@ -36,6 +44,10 @@ public class Commande
             Console.WriteLine($"{reader["idCommande"]}, {reader["prix"]}, {reader["dateCo"]}");
         }  
     } 
+    /// <summary>
+    /// Permet d'afficher une certain commande grace à son numéro de commande
+    /// </summary>
+    /// <param name="conn"></param>
     public void AfficheCommandeParty(MySqlConnection conn)
     {
         Console.Write("Entrez l'ID de la commande : ");

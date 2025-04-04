@@ -3,6 +3,10 @@ using MySql.Data.MySqlClient;
 
 public class Plat
 {
+    /// <summary>
+    /// Permet d'ajouter un plat dans la base de donnée
+    /// </summary>
+    /// <param name="conn"></param>
     public void AjouterPlat(MySqlConnection conn)
     {
         Console.Write("Entrez l'ID du plat : ");

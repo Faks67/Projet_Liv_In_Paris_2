@@ -3,6 +3,11 @@ using MySql.Data.MySqlClient;
 
 public class Utilisateur
 {
+    /// <summary>
+    /// Crée un utilisateur
+    /// </summary>
+    /// <param name="idUtilisateur"></param>
+    /// <param name="motDePasse"></param>
     public void AjouterUtilisateur(string idUtilisateur, string motDePasse)
     {
         using (var conn = Database.GetConnection())
@@ -15,7 +20,9 @@ public class Utilisateur
         }
         Console.WriteLine("Utilisateur ajouté !");
     }
-
+    /// <summary>
+    /// Affiche l'ensemble des utilisateurs
+    /// </summary>
     public void AfficherUtilisateurs()
     {
         using (var conn = Database.GetConnection())

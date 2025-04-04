@@ -65,7 +65,7 @@ CREATE TABLE Entreprise(
 );
 
 CREATE TABLE Plat(
-   IdPlat INT,
+   IdPlat VarChar(50),
    TypePlat VARCHAR(50),
    Quantité INT,
    Nationalité VARCHAR(50),
@@ -74,7 +74,7 @@ CREATE TABLE Plat(
    DateFabrication DATE,
    DatePeremption DATE,
    idRecette VARCHAR(50) NOT NULL,
-   prix INT,
+   prix FLOAT,
    PRIMARY KEY(IdPlat),
    FOREIGN KEY(idRecette) REFERENCES Recette(idRecette)
 );
@@ -90,7 +90,7 @@ CREATE TABLE Avis(
 );
 
 CREATE TABLE Commande(
-   idCommande INT,
+   idCommande VarChar(50),
    statut VARCHAR(50),
    idClient VARCHAR(50) NOT NULL,
    prix FLOAT,

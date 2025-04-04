@@ -3,6 +3,10 @@ using MySql.Data.MySqlClient;
 
 public class statistique
 {
+    /// <summary>
+    /// Permet d'afficher le nombre de livraison effectué par un cuisinier
+    /// </summary>
+    /// <param name="conn"></param>
     public void AfficherNombreLivraisonsParCuisinier(MySqlConnection conn)
     {
             var cmd = new MySqlCommand("SELECT CuisinierID, COUNT(*) AS NbLivraisons FROM Commandes GROUP BY CuisinierID", conn);
@@ -12,12 +16,20 @@ public class statistique
                 Console.WriteLine($"Cuisinier {reader["CuisinierID"]} a fait {reader["NbLivraisons"]} livraisons");
             }
     }
+    /// <summary>
+    /// Permet d'affiche le prix moyen des commandes en cours
+    /// </summary>
+    /// <param name="conn"></param>
     public void AfficherMoyennePrixCommandes(MySqlConnection conn)
     {
             var cmd = new MySqlCommand("SELECT AVG(Prix) FROM Commandes", conn);
             object moyenne = cmd.ExecuteScalar();
             Console.WriteLine($"Moyenne des prix des commandes : {moyenne}€");
     }
+    /// <summary>
+    /// Permet d'afficher toutes les commandes realisé durant une periode determiné
+    /// </summary>
+    /// <param name="conn"></param>
     public void AfficherCommandesParPeriode(MySqlConnection conn)
         {
             Console.Write("Entrez la date de début (yyyy-MM-dd) : ");
@@ -39,6 +51,10 @@ public class statistique
                     }
                 }
         }
+        /// <summary>
+        /// Permet d'afficher les commandes en fonction du client et de la nationalité du plat realisé
+        /// </summary>
+        /// <param name="conn"></param>
         public void AfficherCommandesClientNationalite(MySqlConnection conn)
         {
             Console.Write("Entrez l'ID du client : ");
@@ -59,6 +75,10 @@ public class statistique
                 }
             }
         }
+        /// <summary>
+        /// Permet d'afficher les commandes par client et par période
+        /// </summary>
+        /// <param name="conn"></param>
         public void AfficherCommandesClientPeriode(MySqlConnection conn)
         {
             Console.Write("Entrez l'ID du client : ");

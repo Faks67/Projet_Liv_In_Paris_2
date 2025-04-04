@@ -4,6 +4,10 @@ using MySql.Data.MySqlClient;
 
 public class Cuisinier
 {
+    /// <summary>
+    /// Permet d'ajouter un cuisiner dans la base de donnée
+    /// </summary>
+    /// <param name="conn"></param>
     public void AjouterCuisinier(MySqlConnection conn)
     {
         Console.Write("Entrez l'ID du cuisinier : ");
@@ -35,6 +39,10 @@ public class Cuisinier
         cmd.Parameters.AddWithValue("@numTel", numTel);
         cmd.Parameters.AddWithValue("@station", station);
     }
+    /// <summary>
+    /// Permet de modifier un cuisinier
+    /// </summary>
+    /// <param name="conn"></param>
     public void ModifierCuisinier(MySqlConnection conn)
     {
         Console.Write("Entrez l'ID du cuisinier : ");
@@ -66,6 +74,10 @@ public class Cuisinier
         cmd.Parameters.AddWithValue("@station", station);
         Console.WriteLine("Cuisinier modifié");
     }
+    /// <summary>
+    /// Permet de supprimer un cuisinier
+    /// </summary>
+    /// <param name="conn"></param>
     public void SupprimerCuisinier(MySqlConnection conn)
     {
         Console.Write("Entrez l'ID du cuisinier : ");
@@ -75,6 +87,10 @@ public class Cuisinier
         cmd.ExecuteNonQuery();
         Console.WriteLine("Cuisinier Supprimé");
     }
+    /// <summary>
+    /// Affiche l'ensemble des cuisiniers
+    /// </summary>
+    /// <param name="conn"></param>
     public void AfficherCuisinier(MySqlConnection conn)
     {
             var cmd = new MySqlCommand("SELECT * FROM Client ORDER BY nom ASC", conn);
@@ -84,6 +100,10 @@ public class Cuisinier
                 Console.WriteLine($"ID: {reader["idClient"]}, Zone: {reader["ZoneDeLivraison"]}, Station: {reader["StationProche"]}");
             }
     }
+    /// <summary>
+    /// Affiche l'ensemble des clients servis par un cuisinier
+    /// </summary>
+    /// <param name="conn"></param>
     public void AfficherClient(MySqlConnection conn)
     {
         Console.Write("Entrez l'ID du cuisinier : ");
@@ -114,6 +134,10 @@ public class Cuisinier
             Console.WriteLine($"Client ID: {reader["idClient"]}, Nom: {reader["nom"]} {reader["prenom"]}, Date: {reader["dateCommande"]}");
         }
     }
+    /// <summary>
+    /// Donne tous les plats realisé par un cuisinier, durant une periode de temps ou depuis la creation du compte
+    /// </summary>
+    /// <param name="conn"></param>
     public void platRealiser(MySqlConnection conn)
     {
         Console.Write("Entrez l'ID du cuisinier : ");
@@ -140,8 +164,35 @@ public class Cuisinier
             Console.WriteLine($"Plat: {reader["nomPlat"]}, Nombre de fois préparé: {reader["frequence"]}");
         }
     }
+    /// <summary>
+    /// Trouve le plat le plus recent du cuisinier s'il existe
+    /// </summary>
+    /// <param name="conn"></param>
     public void platRecent(MySqlConnection conn)
     {
+        Console.Write("Entrez l'ID du cuisinier : ");
+        string idCuisinier = Console.ReadLine();
 
+        string query = "SELECT p.nomPlat, p.DateFabrication " +
+                    "FROM Commande c " +
+                    "JOIN Plat p ON c.idPlat = p.idPlat " +
+                    "WHERE c.idCuisinier = @idCuisinier " +
+                    "ORDER BY p.DateFabrication DESC " +
+                    "LIMIT 1";
+
+        using var cmd = new MySqlCommand(query, conn);
+        cmd.Parameters.AddWithValue("@idCuisinier", idCuisinier);
+
+        using var reader = cmd.ExecuteReader();
+        if (reader.Read()) // S'il y a un résultat
+        {
+            Console.WriteLine($"Le plat le plus récent préparé par le cuisinier {idCuisinier} est :");
+            Console.WriteLine($"Nom : {reader["nomPlat"]}");
+            Console.WriteLine($"Date de fabrication : {reader["DateFabrication"]}");
+        }
+        else
+        {
+            Console.WriteLine("Aucun plat trouvé pour ce cuisinier.");
+        }
     }
 }
