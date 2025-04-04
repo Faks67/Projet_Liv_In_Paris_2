@@ -6,29 +6,60 @@ class Program
 {
     static void Main()
     {
-        Utilisateur user = new Utilisateur();
+        Console.WriteLine("🔄 Chargement du fichier Excel...");
+
+        // Créer une instance du graphe
+        Graphe<int> graphe = new Graphe<int>();
+
+        // Spécifie le chemin du fichier Excel
+        string cheminFichier = "Metro_GareFinal.xlsx"; // Assure-toi que ce fichier existe
+
+        // Charger les stations et les liaisons depuis le fichier Excel
+        graphe.ChargerDepuisExcel(cheminFichier);
+
+        // Afficher les détails des stations dans la console
+        Console.WriteLine("\nStations chargées :");
+        graphe.AfficherGraphe(); // Afficher les stations et leurs liaisons
+        graphe.AfficherGrapheVisuel();
+
+        // Générer et sauvegarder le graphe visuel
+        Console.WriteLine("\n🔄 Génération du graphe visuel...");
+        //graphe.GenererGrapheVisuel();
+
+        Console.WriteLine("✅ Graphe visuel généré avec succès !");
+
+        // Demander à l'utilisateur de choisir une station de départ
+        Console.WriteLine("\n🛤️ Entrez l'ID de la station de départ : ");
+        int idDepart = int.Parse(Console.ReadLine());
+
+        // Demander à l'utilisateur de choisir une station d'arrivée
+        Console.WriteLine("🛤️ Entrez l'ID de la station d'arrivée : ");
+        int idArrivee = int.Parse(Console.ReadLine());
+
+        // Utiliser l'algorithme de Dijkstra pour trouver le plus court chemin
+        var (chemin, poids) = graphe.Dijkstra(idDepart, idArrivee); // Retourne à la fois le chemin et le poids
+
+        if (chemin != null && chemin.Count > 0)
+        {
+            Console.WriteLine($"\n✅ Le chemin le plus court entre {idDepart} et {idArrivee} :");
+
+            // Afficher le poids du chemin
+            double poidsTotal = poids;
+            Console.WriteLine($"Poids (distance/temps) : {poidsTotal}");
+
+            // Afficher les stations sur le chemin
+            Console.WriteLine("Stations sur le chemin : ");
+            foreach (var station in chemin)
+            {
+                Console.WriteLine($"{station}: {graphe.GetStationNom(station)}");
+            }
+        }
+        else
+        {
+            Console.WriteLine($"❌ Aucune route trouvée entre la station {idDepart} et la station {idArrivee}.");
+        }
         MySqlConnection conn = Database.GetConnection();
         conn.Open();
-        // var cmd1 = new MySqlCommand("DELETE FROM Utilisateur", conn);
-        // var cmd = new MySqlCommand("DELETE FROM Client", conn);
-        // cmd.ExecuteNonQuery();
-        // cmd1.ExecuteNonQuery();
-        // // Ajout d'un utilisateur
-        // // for (int i = 0; i<5; i++){
-        //  utilisateurManager.AjouterUtilisateur("user", "password123");
-
-        // // Affichage des utilisateurs
-        // // //utilisateurManager.AfficherUtilisateurs();
-
-        // // // Ajout d'un client
-        // // clientManager.AjouterClient("client" + Convert.ToString(i), "Zone A", "Station 1", "trans001", "user" + Convert.ToString(i),"test" + Convert.ToString(5-i), "b", "c", conn);
-        // // float prix = 10.5f;
-        // // commande.CreerCommande("client" + Convert.ToString(i), "a",prix, "a", "a");
-        // // // Affichage des clients
-                
-        // //clientManager.AfficherClientsAlphabetique(conn);
-        // clientManager.AfficherClientsRue(conn);
-        // Console.WriteLine("test");
         Console.WriteLine("Que souhaitez vous faire?\n1 - Gestion des clients\n2 - Gestion des cuisiniers\n3 - Gestion des commandes\n4 - Statistique\nQuittez ");
         string pressed = Console.ReadLine();
         switch (pressed)
