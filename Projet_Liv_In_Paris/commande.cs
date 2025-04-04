@@ -25,5 +25,15 @@ public class Commande
             Console.WriteLine($"{reader["idCommande"]}, {reader["prix"]}, {reader["dateCo"]}");
         }  
     } 
-     
+    public void AfficheCommandeParty(MySqlConnection conn)
+    {
+        string idco = Console.ReadLine();
+        var cmd = new MySqlCommand("SELECT *  FROM Commande WHERE idCommande = @idCo ORDER BY adresse ASC", conn);
+        cmd.Parameters.AddWithValue("@idCo", idco);
+        var reader = cmd.ExecuteReader();
+        while (reader.Read())
+        {
+            Console.WriteLine($"{reader["idCommande"]}, {reader["prix"]}, {reader["dateCo"]}");
+        }  
+    } 
 }

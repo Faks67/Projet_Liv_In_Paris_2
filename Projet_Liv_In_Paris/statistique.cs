@@ -228,9 +228,9 @@
 using System;
 using MySql.Data.MySqlClient;
 
-public class StatistiquesManager
+public class statistique
 {
-        public void NombreLivraisonsParCuisinier(MySqlConnection conn)
+        public void AfficherNombreLivraisonsParCuisinier(MySqlConnection conn)
     {
             var cmd = new MySqlCommand("SELECT CuisinierID, COUNT(*) AS NbLivraisons FROM Commandes GROUP BY CuisinierID", conn);
             var reader = cmd.ExecuteReader();
@@ -239,7 +239,7 @@ public class StatistiquesManager
                 Console.WriteLine($"Cuisinier {reader["CuisinierID"]} a fait {reader["NbLivraisons"]} livraisons");
             }
     }
-    public void MoyennePrixCommandes(MySqlConnection conn)
+    public void AfficherMoyennePrixCommandes(MySqlConnection conn)
     {
             var cmd = new MySqlCommand("SELECT AVG(Prix) FROM Commandes", conn);
             object moyenne = cmd.ExecuteScalar();
@@ -297,13 +297,13 @@ public class StatistiquesManager
             }
             public void AfficherMoyenneClients(MySqlConnection conn)
         {
-                string query = "SELECT AVG(SUM(prix)) AS MoyenneCompte FROM Commande GROUP BY idClient";
+                string query = "SELECT AVG(SUM(prix)) AS MoyenneDep FROM Commande GROUP BY idClient";
                 using (MySqlCommand cmd = new MySqlCommand(query, conn))
                 using (MySqlDataReader reader = cmd.ExecuteReader())
                 {
                     if (reader.Read())
                     {
-                        Console.WriteLine("Moyenne des comptes clients: " + reader["MoyenneCompte"] + " €");
+                        Console.WriteLine("Moyenne des comptes clients: " + reader["MoyenneDep"] + " €");
                     }
                 }
             
