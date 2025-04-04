@@ -345,7 +345,9 @@ class Program
         switch (choix)
         {
             case "1":
-            commande.AfficheCommandeParty(conn);
+            Console.Write("Numéro de la commande : ");
+            string commandeID = Console.ReadLine();
+            commande.AfficheCommandeParty(commandeID, conn);
             break;
             case "2":
             break;

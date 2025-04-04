@@ -3,36 +3,61 @@ using MySql.Data.MySqlClient;
 
 public class Client
 {
-    public void AjouterClient(string idClient, string zoneDeLivraison, string stationProche, string idTransaction, string idUtilisateur, string nom, string prenom, string adresse, MySqlConnection conn)
+    public void AjouterClient(MySqlConnection conn)
     {
-            var cmd = new MySqlCommand("INSERT INTO Client (idClient, ZoneDeLivraison, StationProche, idTransaction, idUtilisateur,adresse, nom, prenom) VALUES (@ID, @Zone, @Station, @Transaction, @Utilisateur, @adresse, @nom, @prenom)", conn);
-            cmd.Parameters.AddWithValue("@ID", idClient);
-            cmd.Parameters.AddWithValue("@Zone", zoneDeLivraison);
-            cmd.Parameters.AddWithValue("@Station", stationProche);
-            cmd.Parameters.AddWithValue("@Transaction", idTransaction);
-            cmd.Parameters.AddWithValue("@Utilisateur", idUtilisateur);
-            cmd.Parameters.AddWithValue("@nom", nom);
-            cmd.Parameters.AddWithValue("@prenom", prenom);
-            cmd.Parameters.AddWithValue("@adresse", adresse);
-            cmd.ExecuteNonQuery();
+        Console.Write("Entrez l'ID du client : ");
+        string idClient = Console.ReadLine();
+        Console.Write("Entrez la zone de livraison : ");
+        string zoneDeLivraison = Console.ReadLine();
+        Console.Write("Entrez la station proche : ");
+        string stationProche = Console.ReadLine();
+        Console.Write("Entrez l'ID de la transaction : ");
+        string idTransaction = Console.ReadLine();
+        Console.Write("Entrez l'ID de l'utilisateur : ");
+        string idUtilisateur = Console.ReadLine();
+        Console.Write("Entrez le nom : ");
+        string nom = Console.ReadLine();
+        Console.Write("Entrez le prénom : ");
+        string prenom = Console.ReadLine();
+        Console.Write("Entrez l'adresse : ");
+        string adresse = Console.ReadLine();
+        var cmd = new MySqlCommand("INSERT INTO Client (idClient, ZoneDeLivraison, StationProche, idTransaction, idUtilisateur,adresse, nom, prenom) VALUES (@ID, @Zone, @Station, @Transaction, @Utilisateur, @adresse, @nom, @prenom)", conn);
+        cmd.Parameters.AddWithValue("@ID", idClient);
+        cmd.Parameters.AddWithValue("@Zone", zoneDeLivraison);
+        cmd.Parameters.AddWithValue("@Station", stationProche);
+        cmd.Parameters.AddWithValue("@Transaction", idTransaction);
+        cmd.Parameters.AddWithValue("@Utilisateur", idUtilisateur);
+        cmd.Parameters.AddWithValue("@nom", nom);
+        cmd.Parameters.AddWithValue("@prenom", prenom);
+        cmd.Parameters.AddWithValue("@adresse", adresse);
+        cmd.ExecuteNonQuery();
         Console.WriteLine("Client ajouté !");
     }
-    public void ModifierClient(int IdClient, string ZoneDeLivraison, string StationProche, int IdTransaction, MySqlConnection conn)
+    public void ModifierClient(MySqlConnection conn)
         {
-                var cmd  = new MySqlCommand("UPDATE Client SET ZoneDeLivraison = @zone, StationProche = @station, idTransaction = @idTransaction WHERE idClient = @idClient", conn);
-                    cmd.Parameters.AddWithValue("@idClient", IdClient);
-                    cmd.Parameters.AddWithValue("@zone", ZoneDeLivraison);
-                    cmd.Parameters.AddWithValue("@station", StationProche);
-                    cmd.Parameters.AddWithValue("@idTransaction", IdTransaction);
-                    cmd.ExecuteNonQuery();
+            Console.Write("Entrez l'ID du client : ");
+            string IdClient = Console.ReadLine();
+            Console.Write("Entrez la zone de livraison : ");
+            string ZoneDeLivraison = Console.ReadLine();
+            Console.Write("Entrez la station proche : ");
+            string StationProche = Console.ReadLine();
+            Console.Write("Entrez l'ID de la transaction : ");
+            int IdTransaction = int.Parse(Console.ReadLine());
+            var cmd  = new MySqlCommand("UPDATE Client SET ZoneDeLivraison = @zone, StationProche = @station, idTransaction = @idTransaction WHERE idClient = @idClient", conn);
+            cmd.Parameters.AddWithValue("@idClient", IdClient);
+            cmd.Parameters.AddWithValue("@zone", ZoneDeLivraison);
+            cmd.Parameters.AddWithValue("@station", StationProche);
+            cmd.Parameters.AddWithValue("@idTransaction", IdTransaction);
+            cmd.ExecuteNonQuery();
             Console.WriteLine("Client modifié");
         }
-        public void SupprimerClient(int idCLient, MySqlConnection conn)
+        public void SupprimerClient(MySqlConnection conn)
         {
-
-                var cmd = new MySqlCommand("DELETE FROM Client WHERE idClient = @idClient", conn);
-                cmd.Parameters.AddWithValue("@idClient", idCLient);
-                cmd.ExecuteNonQuery();
+            Console.Write("Entrez l'ID du client : ");
+            string idClient = Console.ReadLine();
+            var cmd = new MySqlCommand("DELETE FROM Client WHERE idClient = @idClient", conn);
+            cmd.Parameters.AddWithValue("@idClient", idClient);
+            cmd.ExecuteNonQuery();
         }
 
     public void AfficherClientsAlphabetique(MySqlConnection conn)
