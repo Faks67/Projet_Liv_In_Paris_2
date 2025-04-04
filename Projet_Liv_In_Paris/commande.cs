@@ -3,18 +3,29 @@ using MySql.Data.MySqlClient;
 
 public class Commande
 {
-    public void CreerCommande(int idCommande, string statut, string idClient, float prix, string depart, string arrive, MySqlConnection conn)
+    public void CreerCommande(MySqlConnection conn)
         {
-                string query = "INSERT INTO Commande (idCommande, statut, idClient, prix, depart, arrive, dateCo) VALUES (@idCommande, @statut, @idClient, @prix, @depart, @arrive, NOW())";
-                MySqlCommand cmd = new MySqlCommand(query, conn);
-                cmd.Parameters.AddWithValue("@idCommande", idCommande);
-                cmd.Parameters.AddWithValue("@statut", statut);
-                cmd.Parameters.AddWithValue("@idClient", idClient);
-                cmd.Parameters.AddWithValue("@prix", prix);
-                cmd.Parameters.AddWithValue("@depart", depart);
-                cmd.Parameters.AddWithValue("@arrive", arrive);
-                cmd.ExecuteNonQuery();
-                
+            Console.Write("Entrez l'ID de la commande : ");
+            string idCommande = Console.ReadLine();
+            Console.Write("Entrez le statut de la commande : ");
+            string statut = Console.ReadLine();
+            Console.Write("Entrez l'ID du client : ");
+            string idClient = Console.ReadLine();
+            Console.Write("Entrez le prix : ");
+            float prix = float.Parse(Console.ReadLine());
+            Console.Write("Entrez le point de départ : ");
+            string depart = Console.ReadLine();
+            Console.Write("Entrez le point d'arrivée : ");
+            string arrive = Console.ReadLine();
+            string query = "INSERT INTO Commande (idCommande, statut, idClient, prix, depart, arrive, dateCo) VALUES (@idCommande, @statut, @idClient, @prix, @depart, @arrive, NOW())";
+            MySqlCommand cmd = new MySqlCommand(query, conn);
+            cmd.Parameters.AddWithValue("@idCommande", idCommande);
+            cmd.Parameters.AddWithValue("@statut", statut);
+            cmd.Parameters.AddWithValue("@idClient", idClient);
+            cmd.Parameters.AddWithValue("@prix", prix);
+            cmd.Parameters.AddWithValue("@depart", depart);
+            cmd.Parameters.AddWithValue("@arrive", arrive);
+            cmd.ExecuteNonQuery();               
         }   
     public void AfficheCommande(MySqlConnection conn)
     {
@@ -25,8 +36,10 @@ public class Commande
             Console.WriteLine($"{reader["idCommande"]}, {reader["prix"]}, {reader["dateCo"]}");
         }  
     } 
-    public void AfficheCommandeParty(string idco, MySqlConnection conn)
+    public void AfficheCommandeParty(MySqlConnection conn)
     {
+        Console.Write("Entrez l'ID de la commande : ");
+        string idco = Console.ReadLine();
         var cmd = new MySqlCommand("SELECT *  FROM Commande WHERE idCommande = @idCo ORDER BY adresse ASC", conn);
         cmd.Parameters.AddWithValue("@idCo", idco);
         var reader = cmd.ExecuteReader();
