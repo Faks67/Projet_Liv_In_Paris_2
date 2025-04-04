@@ -35,6 +35,9 @@ CREATE TABLE Client(
    StationProche VARCHAR(50),
    idTransaction VARCHAR(50) NOT NULL,
    idUtilisateur VARCHAR(50) NOT NULL,
+   adresse VARCHAR(50),
+   nom VARCHAR(50),
+   prenom VARCHAR(50),
    PRIMARY KEY(idClient),
    UNIQUE(idUtilisateur),
    #FOREIGN KEY(idTransaction) REFERENCES transaction(idTransaction),
@@ -43,11 +46,7 @@ CREATE TABLE Client(
 
 CREATE TABLE Particulier(
    idClient VARCHAR(50),
-   nom VARCHAR(50),
-   prenom VARCHAR(50),
    addMail VARCHAR(50),
-   nomRue VARCHAR(50),
-   nbRue INT,
    CodePostal INT,
    Ville VARCHAR(50),
    numTel INT,
@@ -94,26 +93,25 @@ CREATE TABLE Commande(
    idCommande INT,
    statut VARCHAR(50),
    idClient VARCHAR(50) NOT NULL,
+   prix FLOAT,
+   depart VarChar(50),
+   arrive VarChar(50),
    PRIMARY KEY(idCommande),
    FOREIGN KEY(idClient) REFERENCES Client(idClient)
 );
 
 CREATE TABLE Cuisinier(
    idCuisinier VARCHAR(50),
-   idAvis VARCHAR(50) NOT NULL,
    idUtilisateur VARCHAR(50) NOT NULL,
    nom VARCHAR(50),
    prenom VARCHAR(50),
    addMail VARCHAR(50),
-   nomRue VARCHAR(50),
-   nbRue INT,
+   adresse VARCHAR(50),
    CodePostal INT,
-   Ville VARCHAR(50),
    numTel INT,
    Station VarChar(50),
    PRIMARY KEY(idCuisinier),
    UNIQUE(idUtilisateur),
-   FOREIGN KEY(idAvis) REFERENCES Avis(idAvis),
    FOREIGN KEY(idUtilisateur) REFERENCES Utilisateur(idUtilisateur)
 );
 
