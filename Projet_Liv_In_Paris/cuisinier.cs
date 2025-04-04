@@ -2,7 +2,7 @@ using System;
 using System.Data;
 using MySql.Data.MySqlClient;
 
-public class CuisinierManager
+public class Cuisinier
 {
     public void AjouterCuisinier(int idCuisinier, int idUtilisateur, string nom, string prenom, string addMail, string adresse, int CodePostal, int numTel, string station, MySqlConnection conn)
     {
@@ -30,12 +30,14 @@ public class CuisinierManager
             cmd.Parameters.AddWithValue("@CodePostal", CodePostal);
             cmd.Parameters.AddWithValue("@numTel", numTel);
             cmd.Parameters.AddWithValue("@station", station);
+            Console.WriteLine("Cuisinier modifié");
     }
     public void SupprimerCuisinier(int idCuisinier, MySqlConnection conn)
     {
             var cmd = new MySqlCommand("DELETE FROM Cuisinier WHERE idCuisinier = @idCuisinier");
             cmd.Parameters.AddWithValue("@idCuisinier", idCuisinier);
             cmd.ExecuteNonQuery();
+            Console.WriteLine("Cuisinier Supprimé");
     }
     public void AfficherCuisinier(MySqlConnection conn)
     {

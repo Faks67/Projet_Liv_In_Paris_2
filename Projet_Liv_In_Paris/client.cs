@@ -1,7 +1,7 @@
 using System;
 using MySql.Data.MySqlClient;
 
-public class ClientManager
+public class Client
 {
     public void AjouterClient(string idClient, string zoneDeLivraison, string stationProche, string idTransaction, string idUtilisateur, string nom, string prenom, string adresse, MySqlConnection conn)
     {
@@ -64,7 +64,6 @@ public class ClientManager
             using (MySqlDataReader reader = cmd.ExecuteReader())
             {
                 Console.WriteLine("Liste des clients avec leur total de commandes:");
-                Console.WriteLine("----------------------------------------------");
                 while (reader.Read())
                 {
                     string idClient = reader["idClient"].ToString();

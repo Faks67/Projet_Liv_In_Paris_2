@@ -96,6 +96,7 @@ CREATE TABLE Commande(
    prix FLOAT,
    depart VarChar(50),
    arrive VarChar(50),
+   dateCo datetime,
    PRIMARY KEY(idCommande),
    FOREIGN KEY(idClient) REFERENCES Client(idClient)
 );

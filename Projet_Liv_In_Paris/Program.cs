@@ -230,9 +230,9 @@ class Program
 {
     static void Main()
     {
-        UtilisateurManager utilisateurManager = new UtilisateurManager();
-        ClientManager clientManager = new ClientManager();
-        CommandeManager commande = new CommandeManager();
+        Utilisateur utilisateurManager = new Utilisateur();
+        Client clientManager = new Client();
+        Commande commande = new Commande();
         MySqlConnection conn = Database.GetConnection();
         conn.Open();
         var cmd1 = new MySqlCommand("DELETE FROM Utilisateur", conn);
@@ -240,8 +240,8 @@ class Program
         cmd.ExecuteNonQuery();
         cmd1.ExecuteNonQuery();
         // Ajout d'un utilisateur
-        for (int i = 0; i<5; i++){
-            utilisateurManager.AjouterUtilisateur("user" + Convert.ToString(i), "password123");
+        // for (int i = 0; i<5; i++){
+         utilisateurManager.AjouterUtilisateur("user", "password123");
 
         // Affichage des utilisateurs
         // //utilisateurManager.AfficherUtilisateurs();
@@ -251,31 +251,10 @@ class Program
         // float prix = 10.5f;
         // commande.CreerCommande("client" + Convert.ToString(i), "a",prix, "a", "a");
         // // Affichage des clients
-        string insertClient = "INSERT INTO Client (idClient, ZoneDeLivraison, StationProche, idTransaction, idUtilisateur) VALUES (@idClient, @zone, @station, @idTransaction, @idUtilisateur)";
-                using (MySqlCommand cmdClient = new MySqlCommand(insertClient, conn))
-                {
-                    cmdClient.Parameters.AddWithValue("@idClient", "C123");
-                    cmdClient.Parameters.AddWithValue("@zone", "Centre-ville");
-                    cmdClient.Parameters.AddWithValue("@station", "Gare");
-                    cmdClient.Parameters.AddWithValue("@idTransaction", "T789");
-                    cmdClient.Parameters.AddWithValue("@idUtilisateur", "user0");
-                    cmdClient.ExecuteNonQuery();
-                }
                 
-                string insertCommande = "INSERT INTO Commande (idCommande, statut, idClient, prix) VALUES (@idCommande, @statut, @idClient, @prix)";
-                using (MySqlCommand cmdCommande = new MySqlCommand(insertCommande, conn))
-                {
-                    cmdCommande.Parameters.AddWithValue("@idCommande", 1);
-                    cmdCommande.Parameters.AddWithValue("@statut", "En cours");
-                    cmdCommande.Parameters.AddWithValue("@idClient", "C123");
-                    cmdCommande.Parameters.AddWithValue("@prix", 25.5f);
-                    cmdCommande.ExecuteNonQuery();
-                }
-                
-                Console.WriteLine("Client et commande créés avec succès.");
-        }
         //clientManager.AfficherClientsAlphabetique(conn);
         clientManager.AfficherClientsRue(conn);
+        Console.WriteLine("test");
         conn.Close();
     }
 }

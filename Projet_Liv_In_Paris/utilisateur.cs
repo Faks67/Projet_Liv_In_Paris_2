@@ -1,15 +1,15 @@
 using System;
 using MySql.Data.MySqlClient;
 
-public class UtilisateurManager
+public class Utilisateur
 {
     public void AjouterUtilisateur(string idUtilisateur, string motDePasse)
     {
         using (var conn = Database.GetConnection())
         {
             conn.Open();
-            var cmd = new MySqlCommand("INSERT INTO Utilisateur (idUtilisateur, MotDePasse) VALUES (@ID, @MDP)", conn);
-            cmd.Parameters.AddWithValue("@ID", idUtilisateur);
+            var cmd = new MySqlCommand("INSERT INTO Utilisateur (idUtilisateur, MotDePasse) VALUES (@Id, @MDP)", conn);
+            cmd.Parameters.AddWithValue("@Id", idUtilisateur);
             cmd.Parameters.AddWithValue("@MDP", motDePasse);
             cmd.ExecuteNonQuery();
         }
