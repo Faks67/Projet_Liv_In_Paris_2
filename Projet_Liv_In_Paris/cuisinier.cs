@@ -140,5 +140,8 @@ public class Cuisinier
             Console.WriteLine($"Plat: {reader["nomPlat"]}, Nombre de fois préparé: {reader["frequence"]}");
         }
     }
+    public void platRecent(MySqlConnection conn)
+    {
 
+    }
 }
