@@ -1,5 +1,6 @@
 using System;
 using MySql.Data.MySqlClient;
+using Org.BouncyCastle.Cms;
 
 public class statistique
 {
@@ -9,11 +10,11 @@ public class statistique
     /// <param name="conn"></param>
     public void AfficherNombreLivraisonsParCuisinier(MySqlConnection conn)
     {
-            var cmd = new MySqlCommand("SELECT CuisinierID, COUNT(*) AS NbLivraisons FROM Commandes GROUP BY CuisinierID", conn);
+            var cmd = new MySqlCommand("SELECT idCuisinier, COUNT(*) AS NbLivraisons FROM Commande GROUP BY idCuisinier", conn);
             var reader = cmd.ExecuteReader();
             while (reader.Read())
             {
-                Console.WriteLine($"Cuisinier {reader["CuisinierID"]} a fait {reader["NbLivraisons"]} livraisons");
+                Console.WriteLine($"Cuisinier {reader["idCuisinier"]} a fait {reader["NbLivraisons"]} livraisons");
             }
     }
     /// <summary>
@@ -22,9 +23,9 @@ public class statistique
     /// <param name="conn"></param>
     public void AfficherMoyennePrixCommandes(MySqlConnection conn)
     {
-            var cmd = new MySqlCommand("SELECT AVG(Prix) FROM Commandes", conn);
+            var cmd = new MySqlCommand("SELECT AVG(prix) FROM Commande", conn);
             object moyenne = cmd.ExecuteScalar();
-            Console.WriteLine($"Moyenne des prix des commandes : {moyenne}€");
+            Console.WriteLine($"Moyenne des prix des commandes : {moyenne}");
     }
     /// <summary>
     /// Permet d'afficher toutes les commandes realisé durant une periode determiné
@@ -46,7 +47,7 @@ public class statistique
                         Console.WriteLine("Commandes entre " + dateDebut + " et " + dateFin + ":");
                         while (reader.Read())
                         {
-                            Console.WriteLine($"Commande {reader["idCommande"]}: {reader["statut"]}, Prix: {reader["prix"]} €, Départ: {reader["depart"]}, Arrivée: {reader["arrive"]}, Date: {reader["dateCo"]}");
+                            Console.WriteLine($"Commande {reader["idCommande"]}: {reader["statut"]}, Prix: {reader["prix"]} , Départ: {reader["depart"]}, Arrivée: {reader["arrive"]}, Date: {reader["dateCo"]}");
                         }
                     }
                 }
@@ -59,18 +60,15 @@ public class statistique
         {
             Console.Write("Entrez l'ID du client : ");
             string idClient = Console.ReadLine();
-            Console.Write("Entrez la nationalité : ");
-            string nationalite = Console.ReadLine();
-            string query = "SELECT * FROM Commande WHERE idClient = @idClient AND nationalite = @nationalite";
+            string query = "SELECT co.idCommande, co.statut, co.prix, co.dateCo, co.idClient, co.idCuisinier, co.IdPlat, pl.Nationalité FROM Commande co JOIN Plat pl ON co.IdPlat = pl.IdPlat WHERE co.idClient = @idClient ORDER BY pl.Nationalité ASC;";
             using (MySqlCommand cmd = new MySqlCommand(query, conn))
             {
                 cmd.Parameters.AddWithValue("@idClient", idClient);
-                cmd.Parameters.AddWithValue("@nationalite", nationalite);
                 using (MySqlDataReader reader = cmd.ExecuteReader())
                 {
                     while (reader.Read())
                     {
-                        Console.WriteLine($"Commande {reader["idCommande"]}: {reader["statut"]}, Prix: {reader["prix"]} €, Départ: {reader["depart"]}, Arrivée: {reader["arrive"]}, Date: {reader["dateCo"]}");
+                        Console.WriteLine($"Commande {reader["idCommande"]} Statut : {reader["statut"]}, Prix: {reader["prix"]}, Nationalité : {reader["Nationalité"]}, Client : {reader["idClient"]}");
                     }
                 }
             }
@@ -104,13 +102,13 @@ public class statistique
         }
         public void AfficherMoyenneClients(MySqlConnection conn)
         {
-                string query = "SELECT AVG(SUM(prix)) AS MoyenneDep FROM Commande GROUP BY idClient";
+                string query = "SELECT AVG(TotalDepense) AS MoyenneDep FROM (SELECT SUM(prix) AS TotalDepense FROM Commande GROUP BY idClient) AS DepensesParClient;";
                 using (MySqlCommand cmd = new MySqlCommand(query, conn))
                 using (MySqlDataReader reader = cmd.ExecuteReader())
                 {
                     if (reader.Read())
                     {
-                        Console.WriteLine("Moyenne des comptes clients: " + reader["MoyenneDep"] + " €");
+                        Console.WriteLine("Moyenne des comptes clients: " + reader["MoyenneDep"]);
                     }
                 }
             

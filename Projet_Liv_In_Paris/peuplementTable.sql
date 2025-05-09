@@ -8,19 +8,19 @@ INSERT INTO Utilisateur (idUtilisateur, MotDePasse) VALUES
 
 -- Peuple la table Cuisinier
 INSERT INTO Cuisinier (idCuisinier, idUtilisateur, nom, prenom, addMail, adresse, CodePostal, numTel, Station) VALUES
-('C1', 'U1', 'Durand', 'Paul', 'paul.durand@mail.com', '123 Rue A', 75001, 123, 'Station A'),
-('C2', 'U2', 'Martin', 'Lucas', 'lucas.martin@mail.com', '456 Rue B', 75002, 901, 'Station B'),
-('C3', 'U3', 'Petit', 'Marie', 'marie.petit@mail.com', '789 Rue C', 75003, 312, 'Station C'),
-('C4', 'U4', 'Dubois', 'Clara', 'clara.dubois@mail.com', '321 Rue D', 75004, 123, 'Station D'),
-('C5', 'U5', 'Moreau', 'Jean', 'jean.moreau@mail.com', '654 Rue E', 75005, 534, 'Station E');
+('C1', 'U1', 'Durand', 'Paul', 'paul.durand@mail.com', '123 Rue A', 75001, 123, 'Châtelet'),
+('C2', 'U2', 'Martin', 'Lucas', 'lucas.martin@mail.com', '456 Rue B', 75002, 901, 'Gare du Nord'),
+('C3', 'U3', 'Petit', 'Marie', 'marie.petit@mail.com', '789 Rue C', 75003, 312, 'Bastille'),
+('C4', 'U4', 'Dubois', 'Clara', 'clara.dubois@mail.com', '321 Rue D', 75004, 123, 'Opéra'),
+('C5', 'U5', 'Moreau', 'Jean', 'jean.moreau@mail.com', '654 Rue E', 75005, 534, 'Saint-Lazare');
 
 -- Peuple la table Client
-INSERT INTO Client (idClient, ZoneDeLivraison, StationProche, idTransaction, idUtilisateur, adresse, nom, prenom) VALUES
-('CL1', 'Zone A', 'Station A', 'T1', 'U1', '12 Rue Alpha', 'Leroy', 'Sophie'),
-('CL2', 'Zone B', 'Station B', 'T2', 'U2', '34 Rue Beta', 'Bernard', 'Thomas'),
-('CL3', 'Zone C', 'Station C', 'T3', 'U3', '56 Rue Gamma', 'Robert', 'Emma'),
-('CL4', 'Zone D', 'Station D', 'T4', 'U4', '78 Rue Delta', 'Richard', 'Lucas'),
-('CL5', 'Zone E', 'Station E', 'T5', 'U5', '90 Rue Epsilon', 'Durant', 'Chloe');
+INSERT INTO Client (idClient, ZoneDeLivraison, StationProche, idUtilisateur, adresse, nom, prenom) VALUES
+('CL1', 'Zone A', 'Barbès - Rochechouart', 'U1', '12 Rue Alpha', 'Leroy', 'Sophie'),
+('CL2', 'Zone B', 'République', 'U2', '34 Rue Beta', 'Bernard', 'Thomas'),
+('CL3', 'Zone C', 'Belleville', 'U3', '56 Rue Gamma', 'Robert', 'Emma'),
+('CL4', 'Zone D', 'Gare de Lyon', 'U4', '78 Rue Delta', 'Richard', 'Lucas'),
+('CL5', 'Zone E', 'Place d’Italie', 'U5', '90 Rue Epsilon', 'Durant', 'Chloe');
 
 -- Peuple la table Plat
 INSERT INTO Plat (IdPlat, TypePlat, Quantité, Nationalité, RegimeSpe, IngrediantPrin, DateFabrication, DatePeremption, prix, idCuisinier) VALUES

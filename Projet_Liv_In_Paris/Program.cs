@@ -8,41 +8,62 @@ class Program
 {
     static void Main()
     {
-        // Console.WriteLine(" Chargement du fichier Excel...");
-        //     Graphe<int> graphe = new Graphe<int>(); 
-        //     string cheminFichier = "Metro_GareFinal.xlsx";           
-        //     graphe.ChargerDepuisExcel(cheminFichier);
-        //     Console.WriteLine("\nStations chargées :");
-        //     Console.WriteLine("\n Génération du graphe visuel...");
-        //     graphe.AfficherGrapheVisuel();
-        //     Console.WriteLine(" Graphe visuel généré avec succès !");
-        //     Console.WriteLine("\n Entrez l'ID de la station de départ : ");
-        //     int idDepart = int.Parse(Console.ReadLine());
-        //     Console.WriteLine(" Entrez l'ID de la station d'arrivée : ");
-        //     int idArrivee = int.Parse(Console.ReadLine());
+        Console.WriteLine("Que souhaitez vous faire?\n1 - Acceder au graphes\n2 - Acceder au SQL\nQuittez ");
+        string pressed = Console.ReadLine();
+
+        switch (pressed)
+        {
+            case "1":
+            Graphes();
+            break;
+            case "2":
+            SQL();
+            break;
+            default :
+            Environment.Exit(0);
+            break;
+        }
+        }
+        public static void Graphes()
+        {
+            Console.WriteLine(" Chargement du fichier Excel...");
+            Graphe<int> graphe = new Graphe<int>(); 
+            string cheminFichier = "Metro_GareFinal.xlsx";           
+            graphe.ChargerDepuisExcel(cheminFichier);
+            Console.WriteLine("\nStations chargées :");
+            Console.WriteLine("\n Génération du graphe visuel...");
+            graphe.AfficherGrapheVisuel();
+            Console.WriteLine(" Graphe visuel généré avec succès !");
+            Console.WriteLine("\n Entrez l'ID de la station de départ : ");
+            int idDepart = int.Parse(Console.ReadLine());
+            Console.WriteLine(" Entrez l'ID de la station d'arrivée : ");
+            int idArrivee = int.Parse(Console.ReadLine());
 
 
-        //     var (chemin, poids) = graphe.Dijkstra(idDepart, idArrivee);
+            var (chemin, poids) = graphe.Dijkstra(idDepart, idArrivee);
 
-        //     if (chemin != null)
-        //     {
-        //         string nomDepart = graphe.GetStationNom(idDepart);
-        //         string nomArrivee = graphe.GetStationNom(idArrivee);
-        //         Console.WriteLine($"\n Le chemin le plus court entre {nomDepart} et {nomArrivee} :");
-        //         foreach (int id in chemin)
-        //             Console.WriteLine($"{id}: {graphe.GetStationNom(id)}");
+            if (chemin != null)
+            {
+                string nomDepart = graphe.GetStationNom(idDepart);
+                string nomArrivee = graphe.GetStationNom(idArrivee);
+                Console.WriteLine($"\n Le chemin le plus court entre {nomDepart} et {nomArrivee} :");
+                foreach (int id in chemin)
+                    Console.WriteLine($"{id}: {graphe.GetStationNom(id)}");
 
-        //         Console.WriteLine($" Poids total du trajet : {poids}");
-        //         graphe.AfficherGrapheVisuel(chemin);
-        //     }
-        //     else
-        //     {
-        //         string nomDepart = graphe.GetStationNom(idDepart);
-        //         string nomArrivee = graphe.GetStationNom(idArrivee);
-        //         Console.WriteLine($"❌ Aucune route trouvée entre {nomDepart} et  {nomArrivee}.");
-        //     }
-        
-        MySqlConnection conn = Database.GetConnection();
+                Console.WriteLine($" Poids total du trajet : {poids}");
+                graphe.AfficherGrapheVisuel(chemin);
+            }
+            else
+            {
+                string nomDepart = graphe.GetStationNom(idDepart);
+                string nomArrivee = graphe.GetStationNom(idArrivee);
+                Console.WriteLine($"❌ Aucune route trouvée entre {nomDepart} et  {nomArrivee}.");
+            }
+            Environment.Exit(0);
+        }
+        public static void SQL()
+        {
+            MySqlConnection conn = Database.GetConnection();
         conn.Open();
         Console.WriteLine("Que souhaitez vous faire?\n1 - Se connecter en mode client\n2 - Se connecter en mode cuisinier\n3 - Se connecter en mode Admin\nQuittez ");
         string pressed = Console.ReadLine();
@@ -56,7 +77,7 @@ class Program
             VerCuisinier(conn);
             break;
             case "3" : 
-            Admin(conn);
+            Test(conn);
             break;
             default :
             Environment.Exit(0);
@@ -244,7 +265,7 @@ class Program
             client.ModifierClientParty(conn, idClient);
             break;
             case "4" :
-            com.AfficheCommandeParty(conn, idClient);
+            com.AfficheCommandeClient(conn, idClient);
             break;
             default :
             Environment.Exit(0); 
@@ -281,7 +302,7 @@ class Program
             plat.AjouterPlat(idCuisinier, conn);
             break;
             case "2":
-            com.AfficheCommandeParty(conn, idCuisinier);
+            com.AfficheCommandeCuisinier(conn, idCuisinier);
             break;
             case "3" :
             cuisinier.ModifierCuisinierParty(conn, idCuisinier);
@@ -291,5 +312,32 @@ class Program
             conn.Close();
             break;
         }
+    }
+    public static List<Tuple<string, string, List<string>>> Test(MySqlConnection conn)
+    {
+             string query = @"SELECT c.nom AS NomCuisinier, c.prenom AS PrenomCuisinier, cl.nom AS NomClient, cl.prenom AS PrenomClient FROM Cuisinier c JOIN Commande co ON c.idCuisinier = co.idCuisinier JOIN Client cl ON co.idClient = cl.idClient ORDER BY c.nom, c.prenom, cl.nom, cl.prenom;";
+            var cmd = new MySqlCommand(query, conn);
+            var reader = cmd.ExecuteReader();
+
+            List<Tuple<string, string, List<string>>> ListecuisinierClient = new List<Tuple<string, string, List<string>>>();
+
+
+            while (reader.Read())
+            {
+                string cuisinierNom = reader["NomCuisinier"].ToString();
+                string cuisinierPrenom = reader["PrenomCuisinier"].ToString();
+                string clientNomPrenom = reader["NomClient"].ToString() + " " + reader["PrenomClient"].ToString();
+
+                var cuisinierTuple = ListecuisinierClient.Find(c => c.Item1 == cuisinierNom && c.Item2 == cuisinierPrenom);
+
+                if (cuisinierTuple == null)
+                {
+                    cuisinierTuple = new Tuple<string, string, List<string>>(cuisinierNom, cuisinierPrenom, new List<string>());
+                    ListecuisinierClient.Add(cuisinierTuple);
+                }
+
+                cuisinierTuple.Item3.Add(clientNomPrenom);
+            }
+        return ListecuisinierClient;
     }
 }

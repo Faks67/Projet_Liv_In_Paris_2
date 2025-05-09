@@ -33,14 +33,12 @@ CREATE TABLE Client(
    idClient VARCHAR(50),
    ZoneDeLivraison VARCHAR(50),
    StationProche VARCHAR(50),
-   idTransaction VARCHAR(50) NOT NULL,
    idUtilisateur VARCHAR(50) NOT NULL,
    adresse VARCHAR(50),
    nom VARCHAR(50),
    prenom VARCHAR(50),
    PRIMARY KEY(idClient),
    UNIQUE(idUtilisateur),
-   #FOREIGN KEY(idTransaction) REFERENCES transaction(idTransaction),
    FOREIGN KEY(idUtilisateur) REFERENCES Utilisateur(idUtilisateur)
 );
 
@@ -113,7 +111,7 @@ CREATE TABLE Commande(
    arrive VarChar(50),
    dateCo datetime,
 	idClient VARCHAR(50) NOT NULL,
-	IdPlat VarChar(50),
+   IdPlat VarChar(50),
    PRIMARY KEY(idCommande),
    FOREIGN KEY(idClient) REFERENCES Client(idClient),
    FOREIGN KEY(idCuisinier) REFERENCES Cuisinier(idCuisinier),
