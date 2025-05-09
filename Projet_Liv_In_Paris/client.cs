@@ -9,6 +9,12 @@ public class Client
     /// <param name="conn"></param>
     public void AjouterClient(MySqlConnection conn)
     {
+        Console.Write("Entrez l'ID de l'utilisateur : ");
+        string idUtilisateur = Console.ReadLine();
+        Console.Write("Entrez le mot de passe de l'utilisateur : ");
+        string mdp = Console.ReadLine();
+        Utilisateur user = new Utilisateur();
+        user.AjouterUtilisateur(idUtilisateur, mdp, conn);
         Console.Write("Entrez l'ID du client : ");
         string idClient = Console.ReadLine();
         Console.Write("Entrez la zone de livraison : ");
@@ -17,8 +23,6 @@ public class Client
         string stationProche = Console.ReadLine();
         Console.Write("Entrez l'ID de la transaction : ");
         string idTransaction = Console.ReadLine();
-        Console.Write("Entrez l'ID de l'utilisateur : ");
-        string idUtilisateur = Console.ReadLine();
         Console.Write("Entrez le nom : ");
         string nom = Console.ReadLine();
         Console.Write("Entrez le prénom : ");
@@ -84,7 +88,6 @@ public class Client
             {
                 Console.WriteLine($"ID: {reader["idClient"]}, Nom : {reader["nom"]}, Zone: {reader["ZoneDeLivraison"]}, Station: {reader["StationProche"]}");
             }
-        
     }
     /// <summary>
     /// Permet d'afficher les clients en les regroupant par nom de rue

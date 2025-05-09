@@ -13,7 +13,11 @@ public class Cuisinier
         Console.Write("Entrez l'ID du cuisinier : ");
         int idCuisinier = int.Parse(Console.ReadLine());
         Console.Write("Entrez l'ID de l'utilisateur : ");
-        int idUtilisateur = int.Parse(Console.ReadLine());
+        string idUtilisateur = Console.ReadLine();
+        Console.Write("Entrez le mot de passe de l'utilisateur : ");
+        string mdp = Console.ReadLine();
+        Utilisateur user = new Utilisateur();
+        user.AjouterUtilisateur(idUtilisateur, mdp, conn);
         Console.Write("Entrez le nom : ");
         string nom = Console.ReadLine();
         Console.Write("Entrez le prénom : ");
@@ -28,7 +32,7 @@ public class Cuisinier
         int numTel = int.Parse(Console.ReadLine());
         Console.Write("Entrez la station : ");
         string station = Console.ReadLine();
-        var cmd = new MySqlCommand("INSERT INTO Client (idClient,idUtilisateur, nom, prenom, addMail, adresse, CodePostal , numTel, station) VALUES (@ID, @IDuti, @nom, @prenom, @addMail, @adresse, @CodePostal, @numtel, @station)", conn);
+        var cmd = new MySqlCommand("INSERT INTO Cuisinier (idCuisinier,idUtilisateur, nom, prenom, addMail, adresse, CodePostal , numTel, station) VALUES (@ID, @IDuti, @nom, @prenom, @addMail, @adresse, @CodePostal, @numtel, @station)", conn);
         cmd.Parameters.AddWithValue("@ID", idCuisinier);
         cmd.Parameters.AddWithValue("@IDuti", idUtilisateur);
         cmd.Parameters.AddWithValue("@nom", nom);
@@ -38,6 +42,8 @@ public class Cuisinier
         cmd.Parameters.AddWithValue("@CodePostal", CodePostal);
         cmd.Parameters.AddWithValue("@numTel", numTel);
         cmd.Parameters.AddWithValue("@station", station);
+        cmd.ExecuteNonQuery();
+        Console.WriteLine("Cuisinier ajouté");
     }
     /// <summary>
     /// Permet de modifier un cuisinier
@@ -63,7 +69,7 @@ public class Cuisinier
         int numTel = int.Parse(Console.ReadLine());
         Console.Write("Entrez la station : ");
         string station = Console.ReadLine();
-        var cmd = new MySqlCommand("Update Cuisinier SET nom = @nom, prenom = @prenom, addMail = @addMail, adresse = @adresse, CodePostal = @CodePostal, numTel = @numTel, station = @station WHERE idCuisinier = @idCuisinier", conn);
+        var cmd = new MySqlCommand("Update Cuisinier SET nom = @nom, prenom = @prenom, addMail = @addMail, adresse = @adresse, CodePostal = @CodePostal, numTel = @numTel, station = @station WHERE idCuisinier = @ID", conn);
         cmd.Parameters.AddWithValue("@ID", idCuisinier);
         cmd.Parameters.AddWithValue("@nom", nom);
         cmd.Parameters.AddWithValue("@prenom", prenom);
@@ -72,6 +78,7 @@ public class Cuisinier
         cmd.Parameters.AddWithValue("@CodePostal", CodePostal);
         cmd.Parameters.AddWithValue("@numTel", numTel);
         cmd.Parameters.AddWithValue("@station", station);
+        cmd.ExecuteNonQuery();
         Console.WriteLine("Cuisinier modifié");
     }
     /// <summary>
@@ -86,19 +93,6 @@ public class Cuisinier
         cmd.Parameters.AddWithValue("@idCuisinier", idCuisinier);
         cmd.ExecuteNonQuery();
         Console.WriteLine("Cuisinier Supprimé");
-    }
-    /// <summary>
-    /// Affiche l'ensemble des cuisiniers
-    /// </summary>
-    /// <param name="conn"></param>
-    public void AfficherCuisinier(MySqlConnection conn)
-    {
-            var cmd = new MySqlCommand("SELECT * FROM Client ORDER BY nom ASC", conn);
-            var reader = cmd.ExecuteReader();
-            while (reader.Read())
-            {
-                Console.WriteLine($"ID: {reader["idClient"]}, Zone: {reader["ZoneDeLivraison"]}, Station: {reader["StationProche"]}");
-            }
     }
     /// <summary>
     /// Affiche l'ensemble des clients servis par un cuisinier
@@ -194,5 +188,14 @@ public class Cuisinier
         {
             Console.WriteLine("Aucun plat trouvé pour ce cuisinier.");
         }
+    }
+    public void AfficherCuisiniersAlphabetique(MySqlConnection conn)
+    {
+            var cmd = new MySqlCommand("SELECT * FROM Cuisinier", conn);
+            var reader = cmd.ExecuteReader();
+            while (reader.Read())
+            {
+                Console.WriteLine($"ID: {reader["idCuisinier"]}, Nom : {reader["nom"]}, Adresse: {reader["adresse"]}");
+            }
     }
 }

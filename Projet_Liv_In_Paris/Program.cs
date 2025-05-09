@@ -6,62 +6,64 @@ class Program
 {
     static void Main()
     {
-        Console.WriteLine("🔄 Chargement du fichier Excel...");
+        // Console.WriteLine("🔄 Chargement du fichier Excel...");
 
-        // Créer une instance du graphe
-        Graphe<int> graphe = new Graphe<int>();
+        // // Créer une instance du graphe
+        // Graphe<int> graphe = new Graphe<int>();
 
-        // Spécifie le chemin du fichier Excel
-        string cheminFichier = "Metro_GareFinal.xlsx"; // Assure-toi que ce fichier existe
+        // // Spécifie le chemin du fichier Excel
+        // string cheminFichier = "Metro_GareFinal.xlsx"; // Assure-toi que ce fichier existe
 
-        // Charger les stations et les liaisons depuis le fichier Excel
-        graphe.ChargerDepuisExcel(cheminFichier);
+        // // Charger les stations et les liaisons depuis le fichier Excel
+        // graphe.ChargerDepuisExcel(cheminFichier);
 
-        // Afficher les détails des stations dans la console
-        Console.WriteLine("\nStations chargées :");
-        graphe.AfficherGraphe(); // Afficher les stations et leurs liaisons
-        graphe.AfficherGrapheVisuel();
+        // // Afficher les détails des stations dans la console
+        // Console.WriteLine("\nStations chargées :");
+        // graphe.AfficherGraphe(); // Afficher les stations et leurs liaisons
+        // graphe.AfficherGrapheVisuel();
 
-        // Générer et sauvegarder le graphe visuel
-        Console.WriteLine("\n🔄 Génération du graphe visuel...");
-        //graphe.GenererGrapheVisuel();
+        // // Générer et sauvegarder le graphe visuel
+        // Console.WriteLine("\n🔄 Génération du graphe visuel...");
+        // //graphe.GenererGrapheVisuel();
 
-        Console.WriteLine("✅ Graphe visuel généré avec succès !");
+        // Console.WriteLine("✅ Graphe visuel généré avec succès !");
 
-        // Demander à l'utilisateur de choisir une station de départ
-        Console.WriteLine("\n🛤️ Entrez l'ID de la station de départ : ");
-        int idDepart = int.Parse(Console.ReadLine());
+        // // Demander à l'utilisateur de choisir une station de départ
+        // Console.WriteLine("\n🛤️ Entrez l'ID de la station de départ : ");
+        // int idDepart = int.Parse(Console.ReadLine());
 
-        // Demander à l'utilisateur de choisir une station d'arrivée
-        Console.WriteLine("🛤️ Entrez l'ID de la station d'arrivée : ");
-        int idArrivee = int.Parse(Console.ReadLine());
+        // // Demander à l'utilisateur de choisir une station d'arrivée
+        // Console.WriteLine("🛤️ Entrez l'ID de la station d'arrivée : ");
+        // int idArrivee = int.Parse(Console.ReadLine());
 
-        // Utiliser l'algorithme de Dijkstra pour trouver le plus court chemin
-        var (chemin, poids) = graphe.Dijkstra(idDepart, idArrivee); // Retourne à la fois le chemin et le poids
+        // // Utiliser l'algorithme de Dijkstra pour trouver le plus court chemin
+        // var (chemin, poids) = graphe.Dijkstra(idDepart, idArrivee); // Retourne à la fois le chemin et le poids
 
-        if (chemin != null && chemin.Count > 0)
-        {
-            Console.WriteLine($"\n✅ Le chemin le plus court entre {idDepart} et {idArrivee} :");
+        // if (chemin != null && chemin.Count > 0)
+        // {
+        //     Console.WriteLine($"\n✅ Le chemin le plus court entre {idDepart} et {idArrivee} :");
 
-            // Afficher le poids du chemin
-            double poidsTotal = poids;
-            Console.WriteLine($"Poids (distance/temps) : {poidsTotal}");
+        //     // Afficher le poids du chemin
+        //     double poidsTotal = poids;
+        //     Console.WriteLine($"Poids (distance/temps) : {poidsTotal}");
 
-            // Afficher les stations sur le chemin
-            Console.WriteLine("Stations sur le chemin : ");
-            foreach (var station in chemin)
-            {
-                Console.WriteLine($"{station}: {graphe.GetStationNom(station)}");
-            }
-        }
-        else
-        {
-            Console.WriteLine($"❌ Aucune route trouvée entre la station {idDepart} et la station {idArrivee}.");
-        }
+        //     // Afficher les stations sur le chemin
+        //     Console.WriteLine("Stations sur le chemin : ");
+        //     foreach (var station in chemin)
+        //     {
+        //         Console.WriteLine($"{station}: {graphe.GetStationNom(station)}");
+        //     }
+        // }
+        // else
+        // {
+        //     Console.WriteLine($"❌ Aucune route trouvée entre la station {idDepart} et la station {idArrivee}.");
+        // }
+        
         MySqlConnection conn = Database.GetConnection();
         conn.Open();
         Console.WriteLine("Que souhaitez vous faire?\n1 - Gestion des clients\n2 - Gestion des cuisiniers\n3 - Gestion des commandes\n4 - Statistique\nQuittez ");
         string pressed = Console.ReadLine();
+
         switch (pressed)
         {
             case "1" : 
@@ -79,7 +81,6 @@ class Program
             default:
             Environment.Exit(0);
             break;
-
         }
         conn.Close();
     }
@@ -116,8 +117,9 @@ class Program
     public static void GestionCuisinier(MySqlConnection conn)
     {
         Cuisinier cuisinier = new Cuisinier();
-        Console.WriteLine("Que souhaitez vous faire ?\n1 - Ajouter un cuisinier\n2 - Mofifier un cuisinier\n3 - Supprimer un cuisinier\n4 - Afficher les clients servis par le cuisinier\n5 - Affichier les plats realisés\n6 - Afficher le plats le plus recent\nQuitter");
+        Console.WriteLine("Que souhaitez vous faire ?\n1 - Ajouter un cuisinier\n2 - Mofifier un cuisinier\n3 - Supprimer un cuisinier\n4 - Afficher les clients servis par le cuisinier\n5 - Affichier les plats realisés\n6 - Afficher le plats le plus recent\n7 - Afficher les cuisiniers\nQuitter");
         string choix = Console.ReadLine();
+        Plat plat = new Plat();
         switch (choix)
         {
             case "1":
@@ -137,6 +139,9 @@ class Program
             break;
             case"6":
             cuisinier.platRecent(conn);
+            break;
+            case"7":
+            cuisinier.AfficherCuisiniersAlphabetique(conn);
             break;
             default : 
             Environment.Exit(0);
@@ -193,6 +198,12 @@ class Program
             break;
         }
     }
+    public static void VerClient(MySqlConnection conn)
+    {
 
-
+    }
+    public static void VerCuisinier(MySqlConnection conn)
+    {
+        
+    }
 }

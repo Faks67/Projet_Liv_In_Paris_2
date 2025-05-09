@@ -63,44 +63,6 @@ CREATE TABLE Entreprise(
    PRIMARY KEY(idClient),
    FOREIGN KEY(idClient) REFERENCES Client(idClient)
 );
-
-CREATE TABLE Plat(
-   IdPlat VarChar(50),
-   TypePlat VARCHAR(50),
-   Quantité INT,
-   Nationalité VARCHAR(50),
-   RegimeSpe VARCHAR(50),
-   IngrediantPrin VARCHAR(50),
-   DateFabrication DATE,
-   DatePeremption DATE,
-   idRecette VARCHAR(50) NOT NULL,
-   prix FLOAT,
-   PRIMARY KEY(IdPlat),
-   FOREIGN KEY(idRecette) REFERENCES Recette(idRecette)
-);
-
-CREATE TABLE Avis(
-   idAvis VARCHAR(50),
-   Note INT,
-   DateAvis DATE,
-   Description VARCHAR(50),
-   idClient VARCHAR(50) NOT NULL,
-   PRIMARY KEY(idAvis),
-   FOREIGN KEY(idClient) REFERENCES Client(idClient)
-);
-
-CREATE TABLE Commande(
-   idCommande VarChar(50),
-   statut VARCHAR(50),
-   idClient VARCHAR(50) NOT NULL,
-   prix FLOAT,
-   depart VarChar(50),
-   arrive VarChar(50),
-   dateCo datetime,
-   PRIMARY KEY(idCommande),
-   FOREIGN KEY(idClient) REFERENCES Client(idClient)
-);
-
 CREATE TABLE Cuisinier(
    idCuisinier VARCHAR(50),
    idUtilisateur VARCHAR(50) NOT NULL,
@@ -116,42 +78,47 @@ CREATE TABLE Cuisinier(
    FOREIGN KEY(idUtilisateur) REFERENCES Utilisateur(idUtilisateur)
 );
 
-CREATE TABLE Cuisine(
-   idCuisinier VARCHAR(50),
-   IdPlat INT,
-   PRIMARY KEY(idCuisinier, IdPlat),
+CREATE TABLE Plat(
+   IdPlat VarChar(50),
+   TypePlat VARCHAR(50),
+   Quantité INT,
+   Nationalité VARCHAR(50),
+   RegimeSpe VARCHAR(50),
+   IngrediantPrin VARCHAR(50),
+   DateFabrication DATE,
+   DatePeremption DaTE,
+   prix FLOAT,
+   idCuisinier VARCHAR(50) NOT NULL,
+   PRIMARY KEY(IdPlat),
+   FOREIGN KEY(idCuisinier) REFERENCES Cuisinier(idCuisinier)
+);
+
+
+CREATE TABLE Avis(
+   idAvis VARCHAR(50),
+   Note INT,
+   DateAvis DATE,
+   Description VARCHAR(50),
+   idClient VARCHAR(50) NOT NULL,
+   PRIMARY KEY(idAvis),
+   FOREIGN KEY(idClient) REFERENCES Client(idClient)
+);
+
+CREATE TABLE Commande(
+   idCommande VarChar(50),
+   statut VARCHAR(50),
+   prix FLOAT,
+   idCuisinier VARCHAR(50) NOT NULL,
+   depart VarChar(50),
+   arrive VarChar(50),
+   dateCo datetime,
+	idClient VARCHAR(50) NOT NULL,
+	IdPlat VarChar(50),
+   PRIMARY KEY(idCommande),
+   FOREIGN KEY(idClient) REFERENCES Client(idClient),
    FOREIGN KEY(idCuisinier) REFERENCES Cuisinier(idCuisinier),
-   FOREIGN KEY(IdPlat) REFERENCES Plat(IdPlat)
+   FOREIGN KEY (IdPlat) REFERENCES Plat(IdPlat)
 );
 
-CREATE TABLE Assure(
-   idCuisinier VARCHAR(50),
-   idLivraison VARCHAR(50),
-   PRIMARY KEY(idCuisinier, idLivraison),
-   FOREIGN KEY(idCuisinier) REFERENCES Cuisinier(idCuisinier),
-   FOREIGN KEY(idLivraison) REFERENCES Livraison(idLivraison)
-);
 
-CREATE TABLE de(
-   IdPlat INT,
-   idLivraison VARCHAR(50),
-   PRIMARY KEY(IdPlat, idLivraison),
-   FOREIGN KEY(IdPlat) REFERENCES Plat(IdPlat),
-   FOREIGN KEY(idLivraison) REFERENCES Livraison(idLivraison)
-);
 
-CREATE TABLE inclus(
-   IdPlat INT,
-   idCommande INT,
-   PRIMARY KEY(IdPlat, idCommande),
-   FOREIGN KEY(IdPlat) REFERENCES Plat(IdPlat),
-   FOREIGN KEY(idCommande) REFERENCES Commande(idCommande)
-);
-
-CREATE TABLE pour(
-   idCommande INT,
-   idTransaction VARCHAR(50),
-   PRIMARY KEY(idCommande, idTransaction),
-   FOREIGN KEY(idCommande) REFERENCES Commande(idCommande),
-   FOREIGN KEY(idTransaction) REFERENCES transaction(idTransaction)
-);
