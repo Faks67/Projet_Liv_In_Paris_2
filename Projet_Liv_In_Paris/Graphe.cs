@@ -29,7 +29,7 @@ public class Graphe<T>
     }
 
 
-    public static string NormaliserNom(string nom)
+    public  string NormaliserNom(string nom)
     {
         return nom.ToLower().Trim().Replace(",", ".");
     }
@@ -43,7 +43,7 @@ public class Graphe<T>
         {
             if (!File.Exists(cheminFichier))
             {
-                Console.WriteLine($"❌ Fichier non trouvé : {cheminFichier}");
+                Console.WriteLine($"Fichier non trouvé : {cheminFichier}");
                 return;
             }
 
@@ -81,7 +81,7 @@ public class Graphe<T>
                     if (!double.TryParse(latitudeStr, NumberStyles.Float, CultureInfo.InvariantCulture, out double latitude) ||
                         !double.TryParse(longitudeStr, NumberStyles.Float, CultureInfo.InvariantCulture, out double longitude))
                     {
-                        Console.WriteLine($"❌ Erreur conversion (ligne {i}) : Latitude: '{latitudeStr}', Longitude: '{longitudeStr}'");
+                        Console.WriteLine($"Erreur conversion (ligne {i}) : Latitude: '{latitudeStr}', Longitude: '{longitudeStr}'");
                         continue;
                     }
 
@@ -144,13 +144,13 @@ public class Graphe<T>
                     }
                 }
 
-                Console.WriteLine("✅ Chargement du graphe terminé !");
+                Console.WriteLine("Chargement du graphe terminé !");
                 AfficherGraphe();
             }
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"❌ Erreur lors du chargement de l'Excel : {ex.Message}");
+            Console.WriteLine($"Erreur lors du chargement de l'Excel : {ex.Message}");
         }
     }
 
@@ -171,15 +171,13 @@ public class Graphe<T>
     /// </summary>
     public void AfficherGraphe()
     {
-      
-
-        Console.WriteLine("\n📌 Liste des liaisons :");
+        Console.WriteLine("\n Liste des liaisons :");
         foreach (var lien in liens)
         {
             Console.WriteLine($"{lien.Source} ({stationsParId[lien.Source]}) ↔ {lien.Destination} ({stationsParId[lien.Destination]}) (Poids : {lien.Poids})");
         }
 
-        Console.WriteLine("\n📌 Liste des stations :");
+        Console.WriteLine("\n Liste des stations :");
         foreach (var noeud in noeuds)
         {
             Console.WriteLine($"{noeud.Key}: {stationsParId[noeud.Key]}");
@@ -215,7 +213,6 @@ public class Graphe<T>
         Brush brushTexte = Brushes.Blue;
         Brush brushStation = Brushes.DarkRed;
 
-        // 🎨 Couleurs officielles des lignes du métro parisien
         Dictionary<string, Color> couleursParLigne = new Dictionary<string, Color>()
     {
         { "1", Color.FromArgb(255, 210, 0) },
@@ -235,7 +232,6 @@ public class Graphe<T>
         { "13", Color.FromArgb(142, 186, 229) },
         { "14", Color.FromArgb(158, 77, 168) }
     };
-
         foreach (var lien in liens)
         {
             if (positions.ContainsKey(lien.Source) && positions.ContainsKey(lien.Destination))
@@ -298,7 +294,7 @@ public class Graphe<T>
 
         string cheminImage = Path.Combine(Directory.GetCurrentDirectory(), "graphe_visuel.png");
         image.Save(cheminImage, System.Drawing.Imaging.ImageFormat.Png);
-        Console.WriteLine($"✅ Image générée et sauvegardée : {cheminImage}");
+        Console.WriteLine($"Image générée et sauvegardée : {cheminImage}");
 
         g.Dispose();
         image.Dispose();
@@ -325,7 +321,7 @@ public class Graphe<T>
         var distances = new Dictionary<int, double>();
         var predecesseurs = new Dictionary<int, int>();
         var queue = new PriorityQueue<int, double>();
-        var visites = new HashSet<string>(); /// On evite de revisiter une station de même nom
+        var visites = new HashSet<string>(); 
 
         foreach (var noeud in noeuds.Keys)
         {
@@ -340,7 +336,7 @@ public class Graphe<T>
             int courant = queue.Dequeue();
             string nomCourant = stationsParId[courant];
 
-            /// Cela empeche de revenir sur une station de même nom déjà quittée
+            
             if (visites.Contains(nomCourant))
                 continue;
 
@@ -364,9 +360,8 @@ public class Graphe<T>
         }
 
         if (!predecesseurs.ContainsKey(arrivee))
-            return (null, double.PositiveInfinity); /// Aucun chemin trouvé
+            return (null, double.PositiveInfinity); 
 
-        /// Reconstruction du chemin
         List<int> chemin = new List<int>();
         int actuel = arrivee;
         while (actuel != depart)
@@ -379,9 +374,6 @@ public class Graphe<T>
 
         return (chemin, distances[arrivee]);
     }
-
-
-
 
 
     public (List<int>, double) BellmanFord(int source, int destination)
@@ -416,7 +408,7 @@ public class Graphe<T>
         {
             if (distances[lien.Source] + lien.Poids < distances[lien.Destination])
             {
-                Console.WriteLine("🚨 Le graphe contient un cycle négatif !");
+                Console.WriteLine("Le graphe contient un cycle négatif !");
                 return (null, double.PositiveInfinity);
             }
         }
@@ -474,13 +466,31 @@ public class Graphe<T>
 
         return distances;
     }
-
+    public int? GetKeyByValue(Dictionary<int, string> dictionary, string value)
+    {
+        foreach (var pair in dictionary)
+        {
+            if (pair.Value.Equals(value, StringComparison.OrdinalIgnoreCase))
+            {
+                return pair.Key;
+            }
+        }
+    return null;
+    }
     public string GetStationNom(int idStation)
     {
         
         return stationsParId.ContainsKey(idStation) ? stationsParId[idStation] : "Station inconnue";
     }
-
+    public int GetStationId(string stationNom)
+    {
+        foreach (var kvp in stationsParId)
+        {
+            if (kvp.Value.Equals(stationNom, StringComparison.OrdinalIgnoreCase))
+                return kvp.Key;
+        }
+        return -1;
+    }
     public (List<int> chemin, double poidsTotal) TrouverUnChemin(int depart, int arrivee)
     {
         HashSet<int> visites = new HashSet<int>();
@@ -537,7 +547,7 @@ public class Graphe<T>
         visites.Remove(courant);
         return false;
     }
-        public static List<Tuple<string, string, List<string>>> CreaList(MySqlConnection conn)
+        public List<Tuple<string, string, List<string>>> CreaList(MySqlConnection conn)
     {
              string query = @"SELECT c.nom AS NomCuisinier, c.prenom AS PrenomCuisinier, cl.nom AS NomClient, cl.prenom AS PrenomClient FROM Cuisinier c JOIN Commande co ON c.idCuisinier = co.idCuisinier JOIN Client cl ON co.idClient = cl.idClient ORDER BY c.nom, c.prenom, cl.nom, cl.prenom;";
             var cmd = new MySqlCommand(query, conn);
@@ -564,6 +574,197 @@ public class Graphe<T>
             }
         return ListecuisinierClient;
     }
+    public int GetStation(string stationCh)
+    {
+        int? stationId = stationsParId.FirstOrDefault(pair => pair.Value == stationCh).Key;
+        if (stationId != 0)
+        {
+            return Convert.ToInt32($"{stationId}");
+        }
+        else
+        {
+            return -1;
+        }
 
+    }
+    public class Personne
+{
+    public string Nom { get; set; }
+    public string Prenom { get; set; }
+
+    public Personne(string nom, string prenom)
+    {
+        Nom = nom;
+        Prenom = prenom;
+    }
+
+    public override string ToString() => $"{Prenom} {Nom}";
+
+    public override bool Equals(object obj) =>
+        obj is Personne p && Nom == p.Nom && Prenom == p.Prenom;
+
+    public override int GetHashCode() =>
+        HashCode.Combine(Nom, Prenom);
+}
+    public Dictionary<Personne, int> ColorierWelshPowell(List<(Personne cuisinier, List<Personne> clients)> relations)
+    {
+    Dictionary<Personne, HashSet<Personne>> graphe = new();
+
+    foreach (var (c1, clients1) in relations)
+    {
+        if (!graphe.ContainsKey(c1)) graphe[c1] = new HashSet<Personne>();
+
+        foreach (var (c2, clients2) in relations)
+        {
+            if (c1.Equals(c2)) continue;
+
+            if (clients1.Intersect(clients2).Any())
+            {
+                graphe[c1].Add(c2);
+
+                if (!graphe.ContainsKey(c2))
+                    graphe[c2] = new HashSet<Personne>();
+
+                graphe[c2].Add(c1);
+            }
+        }
+    }
+   
+    var sommetsTries = graphe.Keys.OrderByDescending(c => graphe[c].Count).ToList();
+    Dictionary<Personne, int> couleurs = new();
+
+    int couleurActuelle = 0;
+
+    while (couleurs.Count < graphe.Count)
+    {
+        foreach (var personne in sommetsTries)
+        {
+            if (couleurs.ContainsKey(personne)) continue;
+
+            bool conflit = graphe[personne].Any(voisin =>
+                couleurs.ContainsKey(voisin) && couleurs[voisin] == couleurActuelle);
+
+            if (!conflit)
+                couleurs[personne] = couleurActuelle;
+        }
+
+        couleurActuelle++;
+    }
+    Console.WriteLine("\nRésultat de la coloration (Welsh-Powell) :");
+    foreach (var kvp in couleurs.OrderBy(k => k.Value))
+    {
+        Console.WriteLine($"{kvp.Key} → Couleur {kvp.Value}");
+    }
+
+    Console.WriteLine($"\nNombre minimal de couleurs nécessaires : {couleurActuelle}");
+
+    return couleurs;
+}
+    public List<(Personne cuisinier, List<Personne> clients)> GetRelations(MySqlConnection conn)
+    {
+    var tuples = CreaList(conn);
+    return tuples.Select(tuple =>
+        (
+            new Personne(tuple.Item1, tuple.Item2),
+            tuple.Item3.Select(c =>
+            {
+                var noms = c.Split(' ');
+                return new Personne(noms[1], noms[0]);
+            }).ToList()
+        )
+    ).ToList();
+    }
+    public void AfficherGrapheWelshPowell(Dictionary<Personne, int> couleurs, Dictionary<Personne, HashSet<Personne>> graphe)
+{
+    int largeur = 1200;
+    int hauteur = 800;
+    Bitmap image = new Bitmap(largeur, hauteur);
+    Graphics g = Graphics.FromImage(image);
+    g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+    g.Clear(Color.White);
+    int rayonCercle = 300;
+    Point centre = new Point(largeur / 2, hauteur / 2);
+    Dictionary<Personne, PointF> positions = new();
+    int total = graphe.Count;
+    double angle = 2 * Math.PI / total;
+    int index = 0;
+
+    foreach (var personne in graphe.Keys)
+    {
+        float x = (float)(centre.X + rayonCercle * Math.Cos(index * angle));
+        float y = (float)(centre.Y + rayonCercle * Math.Sin(index * angle));
+        positions[personne] = new PointF(x, y);
+        index++;
+    }
+    Color[] palette = new Color[]
+    {
+        Color.Red, Color.Blue, Color.Green, Color.Orange, Color.Purple,
+        Color.Brown, Color.DarkCyan, Color.Magenta, Color.Gray, Color.YellowGreen
+    };
+
+    Pen edgePen = new Pen(Color.LightGray, 2);
+    Font font = new Font("Arial", 9);
+    Brush textBrush = Brushes.Black;
+
+    // Dessin des arêtes
+    foreach (var kvp in graphe)
+    {
+        var source = kvp.Key;
+        foreach (var voisin in kvp.Value)
+        {
+            if (positions.ContainsKey(source) && positions.ContainsKey(voisin))
+            {
+                g.DrawLine(edgePen, positions[source], positions[voisin]);
+            }
+        }
+    }
+    foreach (var kvp in positions)
+    {
+        var personne = kvp.Key;
+        PointF pos = kvp.Value;
+        int couleurId = couleurs[personne] % palette.Length;
+        Brush nodeBrush = new SolidBrush(palette[couleurId]);
+
+        float rayon = 15;
+        g.FillEllipse(nodeBrush, pos.X - rayon, pos.Y - rayon, rayon * 2, rayon * 2);
+        g.DrawEllipse(Pens.Black, pos.X - rayon, pos.Y - rayon, rayon * 2, rayon * 2);
+
+        string nom = personne.ToString();
+        g.DrawString(nom, font, textBrush, pos.X + 10, pos.Y - 10);
+    }
+
+    string chemin = Path.Combine(Directory.GetCurrentDirectory(), "graphe_colore.png");
+    image.Save(chemin);
+    Console.WriteLine($"Graphe colorié enregistré ici : {chemin}");
+
+    g.Dispose();
+    image.Dispose();
+}
+    public void test(){
+        MySqlConnection conn = Database.GetConnection();
+            conn.Open();
+            var relations = GetRelations(conn);
+            var couleurs = ColorierWelshPowell(relations);
+            var structure = new Dictionary<Personne, HashSet<Personne>>();
+        foreach (var (c1, clients1) in relations)
+        {
+            if (!structure.ContainsKey(c1))
+                structure[c1] = new();
+
+            foreach (var (c2, clients2) in relations)
+            {
+                if (c1.Equals(c2)) continue;
+                if (clients1.Intersect(clients2).Any())
+                {
+                    if (!structure.ContainsKey(c2))
+                        structure[c2] = new();
+                    structure[c1].Add(c2);
+                    structure[c2].Add(c1);
+                }
+            }
+}
+            AfficherGrapheWelshPowell(couleurs,structure);
+            conn.Close();
+    }
 
 }

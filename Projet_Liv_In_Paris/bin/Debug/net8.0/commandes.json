@@ -1,0 +1,112 @@
+[
+  {
+    "idCommande": "CMD1",
+    "statut": "En cours",
+    "prix": 25,
+    "idCuisinier": "C1",
+    "depart": "Station A",
+    "arrive": "Station B",
+    "dateCo": "2025-05-09T11:02:47",
+    "idClient": "CL1",
+    "IdPlat": "P1"
+  },
+  {
+    "idCommande": "CMD10",
+    "statut": "Livr\u00E9e",
+    "prix": 70,
+    "idCuisinier": "C4",
+    "depart": "Station D",
+    "arrive": "Station A",
+    "dateCo": "2025-05-09T11:02:47",
+    "idClient": "CL5",
+    "IdPlat": "P4"
+  },
+  {
+    "idCommande": "CMD2",
+    "statut": "Livr\u00E9e",
+    "prix": 40,
+    "idCuisinier": "C1",
+    "depart": "Station A",
+    "arrive": "Station C",
+    "dateCo": "2025-05-09T11:02:47",
+    "idClient": "CL2",
+    "IdPlat": "P1"
+  },
+  {
+    "idCommande": "CMD3",
+    "statut": "En cours",
+    "prix": 30,
+    "idCuisinier": "C2",
+    "depart": "Station B",
+    "arrive": "Station D",
+    "dateCo": "2025-05-09T11:02:47",
+    "idClient": "CL3",
+    "IdPlat": "P2"
+  },
+  {
+    "idCommande": "CMD4",
+    "statut": "Annul\u00E9e",
+    "prix": 20,
+    "idCuisinier": "C2",
+    "depart": "Station B",
+    "arrive": "Station E",
+    "dateCo": "2025-05-09T11:02:47",
+    "idClient": "CL4",
+    "IdPlat": "P2"
+  },
+  {
+    "idCommande": "CMD5",
+    "statut": "Livr\u00E9e",
+    "prix": 50,
+    "idCuisinier": "C3",
+    "depart": "Station C",
+    "arrive": "Station A",
+    "dateCo": "2025-05-09T11:02:47",
+    "idClient": "CL5",
+    "IdPlat": "P3"
+  },
+  {
+    "idCommande": "CMD6",
+    "statut": "En cours",
+    "prix": 60,
+    "idCuisinier": "C4",
+    "depart": "Station D",
+    "arrive": "Station B",
+    "dateCo": "2025-05-09T11:02:47",
+    "idClient": "CL1",
+    "IdPlat": "P4"
+  },
+  {
+    "idCommande": "CMD7",
+    "statut": "Livr\u00E9e",
+    "prix": 55,
+    "idCuisinier": "C5",
+    "depart": "Station E",
+    "arrive": "Station C",
+    "dateCo": "2025-05-09T11:02:47",
+    "idClient": "CL2",
+    "IdPlat": "P5"
+  },
+  {
+    "idCommande": "CMD8",
+    "statut": "En cours",
+    "prix": 45,
+    "idCuisinier": "C5",
+    "depart": "Station E",
+    "arrive": "Station D",
+    "dateCo": "2025-05-09T11:02:47",
+    "idClient": "CL3",
+    "IdPlat": "P5"
+  },
+  {
+    "idCommande": "CMD9",
+    "statut": "Annul\u00E9e",
+    "prix": 35,
+    "idCuisinier": "C3",
+    "depart": "Station C",
+    "arrive": "Station E",
+    "dateCo": "2025-05-09T11:02:47",
+    "idClient": "CL4",
+    "IdPlat": "P3"
+  }
+]

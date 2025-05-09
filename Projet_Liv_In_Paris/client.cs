@@ -55,7 +55,7 @@ public class Client
         string StationProche = Console.ReadLine();
         Console.Write("Entrez l'ID de la transaction : ");
         int IdTransaction = int.Parse(Console.ReadLine());
-        var cmd  = new MySqlCommand("UPDATE Client SET ZoneDeLivraison = @zone, StationProche = @station, idTransaction = @idTransaction WHERE idClient = @idClient", conn);
+        var cmd  = new MySqlCommand("UPDATE Client SET ZoneDeLivraison = @zone, StationProche = @station WHERE idClient = @idClient", conn);
         cmd.Parameters.AddWithValue("@idClient", IdClient);
         cmd.Parameters.AddWithValue("@zone", ZoneDeLivraison);
         cmd.Parameters.AddWithValue("@station", StationProche);
@@ -71,7 +71,7 @@ public class Client
         string StationProche = Console.ReadLine();
         Console.Write("Entrez l'ID de la transaction : ");
         int IdTransaction = int.Parse(Console.ReadLine());
-        var cmd  = new MySqlCommand("UPDATE Client SET ZoneDeLivraison = @zone, StationProche = @station, idTransaction = @idTransaction WHERE idClient = @idClient", conn);
+        var cmd  = new MySqlCommand("UPDATE Client SET ZoneDeLivraison = @zone, StationProche = @station WHERE idClient = @idClient", conn);
         cmd.Parameters.AddWithValue("@idClient", IdClient);
         cmd.Parameters.AddWithValue("@zone", ZoneDeLivraison);
         cmd.Parameters.AddWithValue("@station", StationProche);
@@ -98,7 +98,7 @@ public class Client
     public void AfficherClientsAlphabetique(MySqlConnection conn)
     {
 
-            var cmd = new MySqlCommand("SELECT * FROM Client", conn);
+            var cmd = new MySqlCommand("SELECT * FROM Client ORDER BY nom", conn);
             var reader = cmd.ExecuteReader();
             while (reader.Read())
             {

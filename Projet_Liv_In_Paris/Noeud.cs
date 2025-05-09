@@ -14,8 +14,5 @@ public class Noeud<T>
         Id = id;
         Latitude = latitude;
         Longitude = longitude;
-      
-    }
-
-  
+    } 
 }

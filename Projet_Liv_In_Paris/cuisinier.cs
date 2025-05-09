@@ -81,6 +81,11 @@ public class Cuisinier
         cmd.ExecuteNonQuery();
         Console.WriteLine("Cuisinier modifié");
     }
+    /// <summary>
+    /// Permet de modifier un cuisinier sans changer l'id de connection
+    /// </summary>
+    /// <param name="conn"></param>
+    /// <param name="idCuisinier"></param>
     public void ModifierCuisinierParty(MySqlConnection conn, string idCuisinier)
     {
         Console.Write("Entrez l'ID de l'utilisateur : ");
@@ -208,7 +213,7 @@ public class Cuisinier
         cmd.Parameters.AddWithValue("@idCuisinier", idCuisinier);
 
         using var reader = cmd.ExecuteReader();
-        if (reader.Read()) // S'il y a un résultat
+        if (reader.Read())
         {
             Console.WriteLine($"Le plat le plus récent préparé par le cuisinier {idCuisinier} est :");
             Console.WriteLine($"Nom : {reader["nomPlat"]}");
@@ -219,6 +224,10 @@ public class Cuisinier
             Console.WriteLine("Aucun plat trouvé pour ce cuisinier.");
         }
     }
+    /// <summary>
+    /// Fonction affichant les cuisiniers par ordre alphabetique
+    /// </summary>
+    /// <param name="conn"></param>
     public void AfficherCuisiniersAlphabetique(MySqlConnection conn)
     {
             var cmd = new MySqlCommand("SELECT * FROM Cuisinier", conn);

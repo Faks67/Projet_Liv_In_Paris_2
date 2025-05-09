@@ -17,8 +17,8 @@ INSERT INTO Cuisinier (idCuisinier, idUtilisateur, nom, prenom, addMail, adresse
 -- Peuple la table Client
 INSERT INTO Client (idClient, ZoneDeLivraison, StationProche, idUtilisateur, adresse, nom, prenom) VALUES
 ('CL1', 'Zone A', 'Barbès - Rochechouart', 'U1', '12 Rue Alpha', 'Leroy', 'Sophie'),
-('CL2', 'Zone B', 'République', 'U2', '34 Rue Beta', 'Bernard', 'Thomas'),
-('CL3', 'Zone C', 'Belleville', 'U3', '56 Rue Gamma', 'Robert', 'Emma'),
+('CL2', 'Zone B', 'Exelmans', 'U2', '34 Rue Beta', 'Bernard', 'Thomas'),
+('CL3', 'Zone C', 'Châtelet', 'U3', '56 Rue Gamma', 'Robert', 'Emma'),
 ('CL4', 'Zone D', 'Gare de Lyon', 'U4', '78 Rue Delta', 'Richard', 'Lucas'),
 ('CL5', 'Zone E', 'Place d’Italie', 'U5', '90 Rue Epsilon', 'Durant', 'Chloe');
 
@@ -32,13 +32,13 @@ INSERT INTO Plat (IdPlat, TypePlat, Quantité, Nationalité, RegimeSpe, Ingredia
 
 -- Peuple la table Commande
 INSERT INTO Commande (idCommande, statut, prix, idCuisinier, depart, arrive, dateCo, idClient, IdPlat) VALUES
-('CMD1', 'En cours', 25.0, 'C1', 'Station A', 'Station B', NOW(), 'CL1', 'P1'),
-('CMD2', 'Livrée', 40.0, 'C1', 'Station A', 'Station C', NOW(), 'CL2', 'P1'),
-('CMD3', 'En cours', 30.0, 'C2', 'Station B', 'Station D', NOW(), 'CL3', 'P2'),
-('CMD4', 'Annulée', 20.0, 'C2', 'Station B', 'Station E', NOW(), 'CL4', 'P2'),
-('CMD5', 'Livrée', 50.0, 'C3', 'Station C', 'Station A', NOW(), 'CL5', 'P3'),
-('CMD6', 'En cours', 60.0, 'C4', 'Station D', 'Station B', NOW(), 'CL1', 'P4'),
-('CMD7', 'Livrée', 55.0, 'C5', 'Station E', 'Station C', NOW(), 'CL2', 'P5'),
-('CMD8', 'En cours', 45.0, 'C5', 'Station E', 'Station D', NOW(), 'CL3', 'P5'),
-('CMD9', 'Annulée', 35.0, 'C3', 'Station C', 'Station E', NOW(), 'CL4', 'P3'),
-('CMD10', 'Livrée', 70.0, 'C4', 'Station D', 'Station A', NOW(), 'CL5', 'P4');
+('CMD1', 'En cours', 25.0, 'C1', 'George V', 'Porte Maillot', NOW(), 'CL1', 'P1'),
+('CMD2', 'Livrée', 40.0, 'C1', 'Châtelet', 'République', NOW(), 'CL2', 'P1'),
+('CMD3', 'En cours', 30.0, 'C2', 'Gare du Nord', 'Belleville', NOW(), 'CL3', 'P2'),
+('CMD4', 'Annulée', 20.0, 'C2', 'Gare du Nord', 'Gare de Lyon', NOW(), 'CL4', 'P2'),
+('CMD5', 'Livrée', 50.0, 'C3', 'SBastille', 'Place d’Italie', NOW(), 'CL5', 'P3'),
+('CMD6', 'En cours', 60.0, 'C4', 'Opéra', 'Barbès - Rochechouart', NOW(), 'CL1', 'P4'),
+('CMD7', 'Livrée', 55.0, 'C5', 'Saint-Lazare', 'République', NOW(), 'CL2', 'P5'),
+('CMD8', 'En cours', 45.0, 'C5', 'Saint-Lazare', 'Belleville', NOW(), 'CL3', 'P5'),
+('CMD9', 'Annulée', 35.0, 'C3', 'Bastille', 'Gare de Lyon', NOW(), 'CL4', 'P3'),
+('CMD10', 'Livrée', 70.0, 'C4', 'Opéra', 'Place d’Italie', NOW(), 'CL5', 'P4');

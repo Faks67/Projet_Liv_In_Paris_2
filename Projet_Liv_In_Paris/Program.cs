@@ -3,6 +3,8 @@ using System.Collections;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.ConstrainedExecution;
 using MySql.Data.MySqlClient;
+using Org.BouncyCastle.Bcpg.Sig;
+using Org.BouncyCastle.Utilities.IO;
 
 class Program
 {
@@ -28,7 +30,7 @@ class Program
         {
             Console.WriteLine(" Chargement du fichier Excel...");
             Graphe<int> graphe = new Graphe<int>(); 
-            string cheminFichier = "Metro_GareFinal.xlsx";           
+            string cheminFichier = "C:/Users/alexa/Documents/Esilv/A2/S2/PB scientifique et informatique/Projet_Liv_In_Paris/Projet_Liv_In_Paris/Metro_GareFinal.xlsx";           
             graphe.ChargerDepuisExcel(cheminFichier);
             Console.WriteLine("\nStations chargées :");
             Console.WriteLine("\n Génération du graphe visuel...");
@@ -57,7 +59,11 @@ class Program
             {
                 string nomDepart = graphe.GetStationNom(idDepart);
                 string nomArrivee = graphe.GetStationNom(idArrivee);
-                Console.WriteLine($"❌ Aucune route trouvée entre {nomDepart} et  {nomArrivee}.");
+                Console.WriteLine($" Aucune route trouvée entre {nomDepart} et  {nomArrivee}.");
+            }
+            Console.WriteLine("Si vous voulez avoir le graphe des liens entre clients et cuisiniez, appuyer sur 1");
+            if(Console.ReadLine() == "1"){
+            graphe.test();
             }
             Environment.Exit(0);
         }
@@ -88,7 +94,7 @@ class Program
 
         public static void Admin(MySqlConnection conn)
         {
-        Console.WriteLine("Que souhaitez vous faire?\n1 - Gestion des clients\n2 - Gestion des cuisiniers\n3 - Gestion des commandes\n4 - Statistique\nQuittez ");
+        Console.WriteLine("Que souhaitez vous faire?\n1 - Gestion des clients\n2 - Gestion des cuisiniers\n3 - Gestion des commandes\n4 - Statistique\n5 - Exporter les bases de données\nQuittez ");
         string pressed = Console.ReadLine();
 
         switch (pressed)
@@ -104,6 +110,9 @@ class Program
             break;
             case "4":
             Statistique(conn);
+            break;
+            case "5":
+            Export(conn);
             break;
             default:
             Environment.Exit(0);
@@ -277,6 +286,7 @@ class Program
     {
         string idCuisinier = "";
         Plat plat = new Plat();
+        Graphe<int> graphe = new Graphe<int>();
         Commande com = new Commande();
         Cuisinier cuisinier = new Cuisinier();
         Console.WriteLine("Avez vous deja un compte ? (Y/N)");
@@ -307,10 +317,64 @@ class Program
             case "3" :
             cuisinier.ModifierCuisinierParty(conn, idCuisinier);
             break;
+            case "4":
+            Console.WriteLine("De quel commande souhaitez vous avoir la destination ? (entrer l'id de commande)");
+            com.AfficheCommandeCuisinier(conn, idCuisinier);
+            string cheminFichier = "C:/Users/alexa/Documents/Esilv/A2/S2/PB scientifique et informatique/Projet_Liv_In_Paris/Projet_Liv_In_Paris/Metro_GareFinal.xlsx";           
+            graphe.ChargerDepuisExcel(cheminFichier);
+            conn.Open();
+            string a = Console.ReadLine();
+            string depart = com.GetDepart(a, conn);
+            string arrive = com.GetArrive(a, conn);
+            int stationClient = graphe.GetStation(graphe.NormaliserNom(arrive));
+            int stationCuisinier = graphe.GetStation(graphe.NormaliserNom(depart));
+            Console.WriteLine(stationClient);
+            Console.WriteLine(stationCuisinier);
+            var (chemin, poids) = graphe.Dijkstra(stationCuisinier, stationClient);
+            if (chemin != null)
+            {
+                string nomDepart = graphe.GetStationNom(stationCuisinier);
+                string nomArrivee = graphe.GetStationNom(stationClient);
+                Console.WriteLine($"\n Le chemin le plus court entre {nomDepart} et {nomArrivee} :");
+                foreach (int id in chemin)
+                    Console.WriteLine($"{id}: {graphe.GetStationNom(id)}");
+
+                Console.WriteLine($" Poids total du trajet : {poids}");
+                graphe.AfficherGrapheVisuel(chemin);
+            }
+            else
+            {
+                string nomDepart = graphe.GetStationNom(stationCuisinier);
+                string nomArrivee = graphe.GetStationNom(stationClient);
+                Console.WriteLine($"Aucune route trouvée entre {nomDepart} et  {nomArrivee}.");
+            }
+            break;
             default :
             Environment.Exit(0); 
             conn.Close();
             break;
+        }
+    }
+    public static void Export(MySqlConnection conn){
+        Console.WriteLine("Quel base de donnée voulez vous exportez ? (1 - client / 2 -cuisinier / 3 - plat / 4 - commande)");
+        string choix = Console.ReadLine();
+        switch (choix)
+        {
+            case "1" : 
+        DatabaseExporter.ExportToJson("Client", "C:/Users/alexa/Documents/Esilv/A2/S2/PB scientifique et informatique/Projet_Liv_In_Paris/Projet_Liv_In_Paris/client.json", conn);
+        break;
+        case "2":
+        DatabaseExporter.ExportToJson("Cuisinier", "C:/Users/alexa/Documents/Esilv/A2/S2/PB scientifique et informatique/Projet_Liv_In_Paris/Projet_Liv_In_Paris/cuisiniers.json", conn);            
+        break;
+        case "3":
+        DatabaseExporter.ExportToJson("Plat", "C:/Users/alexa/Documents/Esilv/A2/S2/PB scientifique et informatique/Projet_Liv_In_Paris/Projet_Liv_In_Paris/plats.json", conn);
+        break;
+        case "4":
+        DatabaseExporter.ExportToJson("Commande", "C:/Users/alexa/Documents/Esilv/A2/S2/PB scientifique et informatique/Projet_Liv_In_Paris/Projet_Liv_In_Paris/commandes.json", conn);
+        break;
+        default : 
+        Environment.Exit(0);
+        break;
         }
     }
 }

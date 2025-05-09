@@ -61,6 +61,11 @@ public class Commande
             Console.WriteLine($"{reader["idCommande"]}, {reader["prix"]}, {reader["dateCo"]}");
         }  
     }
+    /// <summary>
+    /// affiche les commandes d'un cuisinier particulier
+    /// </summary>
+    /// <param name="conn"></param>
+    /// <param name="id"></param>
     public void AfficheCommandeCuisinier(MySqlConnection conn, string id)
     {
         var cmd = new MySqlCommand("SELECT *  FROM Commande WHERE idCuisinier = @idCo ", conn);
@@ -70,7 +75,12 @@ public class Commande
         {
             Console.WriteLine($"{reader["idCommande"]}, {reader["prix"]}, {reader["dateCo"]}");
         }  
+        conn.Close();
     }
+    /// <summary>
+    /// affiche le prix d'une commande
+    /// </summary>
+    /// <param name="conn"></param>
     public void AfficheCommandePrix(MySqlConnection conn)
     {
         Console.WriteLine("De quelle commande souhiatez vous avoir le prix");
@@ -83,4 +93,44 @@ public class Commande
             Console.WriteLine($"{reader["idCommande"]}, {reader["prix"]}, {reader["dateCo"]}");
         }  
     }  
+    /// <summary>
+    /// Fonction permettant d'obtenir la station de depart pour le trajet
+    /// </summary>
+    /// <param name="idCommande"></param>
+    /// <param name="conn"></param>
+    /// <returns></returns>
+    public string GetDepart(string idCommande, MySqlConnection conn)
+    {
+        string query = "SELECT depart FROM Commande WHERE idCommande = @idCommande";
+        
+        using (MySqlCommand command = new MySqlCommand(query, conn))
+        {
+            command.Parameters.AddWithValue("@idCommande", idCommande);
+            var result = command.ExecuteScalar();
+            
+            if (result != null)
+                return result.ToString();
+        }
+        return "";
+    }   
+    /// <summary>
+    /// Fonction permettant d'obtenir la station d'arrivé pour le trajet
+    /// </summary>
+    /// <param name="idCommande"></param>
+    /// <param name="conn"></param>
+    /// <returns></returns>
+    public string GetArrive(string idCommande, MySqlConnection conn)
+    {
+        string query = "SELECT arrive FROM Commande WHERE idCommande = @idCommande";
+        
+        using (MySqlCommand command = new MySqlCommand(query, conn))
+        {
+            command.Parameters.AddWithValue("@idCommande", idCommande);
+            var result = command.ExecuteScalar();
+            
+            if (result != null)
+                return result.ToString();
+        }
+        return "";
+    } 
 }
