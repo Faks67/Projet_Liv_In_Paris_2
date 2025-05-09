@@ -63,6 +63,22 @@ public class Client
         cmd.ExecuteNonQuery();
         Console.WriteLine("Client modifié");
     }
+    public void ModifierClientParty(MySqlConnection conn, string IdClient)
+    {
+        Console.Write("Entrez la zone de livraison : ");
+        string ZoneDeLivraison = Console.ReadLine();
+        Console.Write("Entrez la station proche : ");
+        string StationProche = Console.ReadLine();
+        Console.Write("Entrez l'ID de la transaction : ");
+        int IdTransaction = int.Parse(Console.ReadLine());
+        var cmd  = new MySqlCommand("UPDATE Client SET ZoneDeLivraison = @zone, StationProche = @station, idTransaction = @idTransaction WHERE idClient = @idClient", conn);
+        cmd.Parameters.AddWithValue("@idClient", IdClient);
+        cmd.Parameters.AddWithValue("@zone", ZoneDeLivraison);
+        cmd.Parameters.AddWithValue("@station", StationProche);
+        cmd.Parameters.AddWithValue("@idTransaction", IdTransaction);
+        cmd.ExecuteNonQuery();
+        Console.WriteLine("Client modifié");
+    }
     /// <summary>
     /// Permet de supprimer un client
     /// </summary>
@@ -119,7 +135,7 @@ public class Client
                 {
                     string idClient = reader["idClient"].ToString();
                     float total = reader["Total"] != DBNull.Value ? Convert.ToSingle(reader["Total"]) : 0;
-                    Console.WriteLine($"Client ID: {idClient}, Total des commandes: {total} €");
+                    Console.WriteLine($"Client ID: {idClient}, Total des commandes: {total} ");
                 }
             }
     }

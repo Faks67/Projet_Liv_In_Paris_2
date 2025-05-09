@@ -51,16 +51,26 @@ public class Commande
     /// Permet d'afficher une certain commande grace à son numéro de commande
     /// </summary>
     /// <param name="conn"></param>
-    public void AfficheCommandeParty(MySqlConnection conn)
+    public void AfficheCommandeParty(MySqlConnection conn, string id)
     {
-        Console.Write("Entrez l'ID de la commande : ");
-        string idco = Console.ReadLine();
-        var cmd = new MySqlCommand("SELECT *  FROM Commande WHERE idCommande = @idCo ORDER BY adresse ASC", conn);
-        cmd.Parameters.AddWithValue("@idCo", idco);
+        var cmd = new MySqlCommand("SELECT *  FROM Commande WHERE idCommande = @idCo ", conn);
+        cmd.Parameters.AddWithValue("@idCo", id);
         var reader = cmd.ExecuteReader();
         while (reader.Read())
         {
             Console.WriteLine($"{reader["idCommande"]}, {reader["prix"]}, {reader["dateCo"]}");
         }  
-    } 
+    }
+    public void AfficheCommandePrix(MySqlConnection conn)
+    {
+        Console.WriteLine("De quelle commande souhiatez vous avoir le prix");
+        string id = Console.ReadLine();
+        var cmd = new MySqlCommand("SELECT *  FROM Commande WHERE idCommande = @idCo ORDER BY adresse ASC", conn);
+        cmd.Parameters.AddWithValue("@idCo", id);
+        var reader = cmd.ExecuteReader();
+        while (reader.Read())
+        {
+            Console.WriteLine($"{reader["idCommande"]}, {reader["prix"]}, {reader["dateCo"]}");
+        }  
+    }  
 }

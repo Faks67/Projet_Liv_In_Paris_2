@@ -52,10 +52,10 @@ public class Plat
     {
         var cmd = new MySqlCommand("SELECT TypePlat,Quantité,Nationalité,RegimeSpe,IngrediantPrin,DateFabrication,DatePeremption,Prix FROM Plat", conn);
             var reader = cmd.ExecuteReader();
+            Console.WriteLine("Plat   Quantité Nationalité Regime Speciale Ingredient Principale Date de Fabrication Date Peremption       Prix");
             while (reader.Read())
             {
-                Console.WriteLine("Plat      Quantité      Nationalité     Regime Speciale       Ingredient Principale       Date de Fabrication     Date Peremption    Prix");
-                Console.WriteLine($"{reader["TypePlat"]} {reader["Quantité"]} {reader["Nationalité"]} {reader["RegimeSpe"]} {reader["IngrediantPrin"]} {reader["DateFabrication"]} {reader["DatePeremption"]} {reader["Prix"]}");
+                Console.WriteLine($"{reader["TypePlat"]}   {reader["Quantité"]}     {reader["Nationalité"]}         {reader["RegimeSpe"]}            {reader["IngrediantPrin"]}          {reader["DateFabrication"]} {reader["DatePeremption"]}    {reader["Prix"]}");
             }
     }
     public void AfficherCuisiniersAlphabetique(MySqlConnection conn)

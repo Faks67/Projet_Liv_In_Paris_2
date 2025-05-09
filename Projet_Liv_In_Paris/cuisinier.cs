@@ -81,6 +81,36 @@ public class Cuisinier
         cmd.ExecuteNonQuery();
         Console.WriteLine("Cuisinier modifié");
     }
+    public void ModifierCuisinierParty(MySqlConnection conn, string idCuisinier)
+    {
+        Console.Write("Entrez l'ID de l'utilisateur : ");
+        int idUtilisateur = int.Parse(Console.ReadLine());
+        Console.Write("Entrez le nom : ");
+        string nom = Console.ReadLine();
+        Console.Write("Entrez le prénom : ");
+        string prenom = Console.ReadLine();
+        Console.Write("Entrez l'adresse e-mail : ");
+        string addMail = Console.ReadLine();
+        Console.Write("Entrez l'adresse : ");
+        string adresse = Console.ReadLine();
+        Console.Write("Entrez le code postal : ");
+        int CodePostal = int.Parse(Console.ReadLine());
+        Console.Write("Entrez le numéro de téléphone : ");
+        int numTel = int.Parse(Console.ReadLine());
+        Console.Write("Entrez la station : ");
+        string station = Console.ReadLine();
+        var cmd = new MySqlCommand("Update Cuisinier SET nom = @nom, prenom = @prenom, addMail = @addMail, adresse = @adresse, CodePostal = @CodePostal, numTel = @numTel, station = @station WHERE idCuisinier = @ID", conn);
+        cmd.Parameters.AddWithValue("@ID", idCuisinier);
+        cmd.Parameters.AddWithValue("@nom", nom);
+        cmd.Parameters.AddWithValue("@prenom", prenom);
+        cmd.Parameters.AddWithValue("@addMail", addMail);
+        cmd.Parameters.AddWithValue("@adresse", adresse);
+        cmd.Parameters.AddWithValue("@CodePostal", CodePostal);
+        cmd.Parameters.AddWithValue("@numTel", numTel);
+        cmd.Parameters.AddWithValue("@station", station);
+        cmd.ExecuteNonQuery();
+        Console.WriteLine("Cuisinier modifié");
+    }
     /// <summary>
     /// Permet de supprimer un cuisinier
     /// </summary>

@@ -1,104 +1,44 @@
 use liv_in_paris;
-Insert into `utilisateur`(idUtilisateur, MotDePasse) values (1,1);
-Insert into `utilisateur`(idUtilisateur, MotDePasse) values (2,2);
-Insert into `client`(idClient, idTransaction, idUtilisateur) values (1,0,1);
-Insert into `recette`(idRecette,descriptionR,TempsPrep,cout) values ('a','a','a',1);
+INSERT INTO Utilisateur (idUtilisateur, MotDePasse) VALUES
+('U1', 'pass123'),
+('U2', 'pass234'),
+('U3', 'pass345'),
+('U4', 'pass456'),
+('U5', 'pass567');
 
-LOAD DATA INFILE 'C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/Clients.csv' 
-INTO TABLE Particulier
-FIELDS TERMINATED BY ';'
-LINES STARTING BY ''
-TERMINATED BY '\r\n'
-IGNORE 1 LINES
-(idClient,nom,prenom,nomRue,nbRue,CodePostal,Ville,numTel,addMail,Station)
-;
+-- Peuple la table Cuisinier
+INSERT INTO Cuisinier (idCuisinier, idUtilisateur, nom, prenom, addMail, adresse, CodePostal, numTel, Station) VALUES
+('C1', 'U1', 'Durand', 'Paul', 'paul.durand@mail.com', '123 Rue A', 75001, 123, 'Station A'),
+('C2', 'U2', 'Martin', 'Lucas', 'lucas.martin@mail.com', '456 Rue B', 75002, 901, 'Station B'),
+('C3', 'U3', 'Petit', 'Marie', 'marie.petit@mail.com', '789 Rue C', 75003, 312, 'Station C'),
+('C4', 'U4', 'Dubois', 'Clara', 'clara.dubois@mail.com', '321 Rue D', 75004, 123, 'Station D'),
+('C5', 'U5', 'Moreau', 'Jean', 'jean.moreau@mail.com', '654 Rue E', 75005, 534, 'Station E');
 
-LOAD DATA INFILE 'C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/Cuisiniers.csv' 
-INTO TABLE Cuisinier
-FIELDS TERMINATED BY ';'
-LINES STARTING BY ''
-TERMINATED BY '\r\n'
-IGNORE 1 LINES
-(idCuisinier,nom,prenom,nomRue,nbRue,CodePostal,Ville,numTel,addMail,Station)
-;
-LOAD DATA INFILE 'C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/Commandes.csv' 
-INTO TABLE Plat
-FIELDS TERMINATED BY ';'
-LINES STARTING BY ''
-TERMINATED BY '\r\n'
-IGNORE 1 LINES
-(idPLat,IdCuisinier,IdClient,nom,prix,Quantité,TypePlat,DateFabrication,DatePeremption,RegimeSpe,Nationalité)
-;
+-- Peuple la table Client
+INSERT INTO Client (idClient, ZoneDeLivraison, StationProche, idTransaction, idUtilisateur, adresse, nom, prenom) VALUES
+('CL1', 'Zone A', 'Station A', 'T1', 'U1', '12 Rue Alpha', 'Leroy', 'Sophie'),
+('CL2', 'Zone B', 'Station B', 'T2', 'U2', '34 Rue Beta', 'Bernard', 'Thomas'),
+('CL3', 'Zone C', 'Station C', 'T3', 'U3', '56 Rue Gamma', 'Robert', 'Emma'),
+('CL4', 'Zone D', 'Station D', 'T4', 'U4', '78 Rue Delta', 'Richard', 'Lucas'),
+('CL5', 'Zone E', 'Station E', 'T5', 'U5', '90 Rue Epsilon', 'Durant', 'Chloe');
 
+-- Peuple la table Plat
+INSERT INTO Plat (IdPlat, TypePlat, Quantité, Nationalité, RegimeSpe, IngrediantPrin, DateFabrication, DatePeremption, prix, idCuisinier) VALUES
+('P1', 'Pizza', 10, 'Italienne', 'Aucun', 'Tomate', NOW(), DATE_ADD(NOW(), INTERVAL 7 DAY), 12.5, 'C1'),
+('P2', 'Sushi', 15, 'Japonaise', 'Poisson', 'Saumon', NOW(), DATE_ADD(NOW(), INTERVAL 3 DAY), 18.0, 'C2'),
+('P3', 'Burger', 20, 'Américaine', 'Aucun', 'Boeuf', NOW(), DATE_ADD(NOW(), INTERVAL 5 DAY), 15.0, 'C3'),
+('P4', 'Couscous', 25, 'Maghrébine', 'Aucun', 'Semoule', NOW(), DATE_ADD(NOW(), INTERVAL 10 DAY), 20.0, 'C4'),
+('P5', 'Paella', 8, 'Espagnole', 'Aucun', 'Riz', NOW(), DATE_ADD(NOW(), INTERVAL 6 DAY), 22.5, 'C5');
 
-USE LivInParis;
-
-INSERT INTO Client (NomEntreprise, MotDePasse) VALUES
-('Boulangerie Dupont', 'mdp123'),
-('Entreprise XYZ', 'xyz789');
-
-INSERT INTO Cuisinier (MotDePasse) VALUES
-('cuisine123'),
-('chef789');
-
-INSERT INTO Station (Nom, Latitude, Longitude) VALUES
-('Gare de Lyon', 40.8632, 5.4764),
-('Châtelet', 45.3880, 3.3489);
-
-INSERT INTO Utilisateur (Nom, Prenom, Adresse, Telephone, Email, IdCuisinier, IdClient, IdStationProche, EstBanni) VALUES
-('Dupond', 'Jean', '10 rue de Paris', '0123456789', 'jean.dupond@email.com', NULL, 1, 1, FALSE),
-('Martin', 'Sofie', '15 avenue de Lyon', '0987654321', 'sofie.martin@email.com', 1, NULL, 2, FALSE);
-
-INSERT INTO Recette (Nom) VALUES
-('Ratatouille'),
-('Tarte aux fraises');
-
-INSERT INTO Plat (Nom, Prix, IdCuisinier, Type, Personnes, DateFabrication, DatePeremption, Regime, IdRecette, CheminAccesPhoto, Nationalite) VALUES
-('Lasagnes', 12.50, 1, 'Plat Principal', 2, '2025-03-01', '2025-03-03', 'Végétarien', 1, 'lasagnes.jpg', 'Italienne'),
-('Couscous', 15.00, 2, 'Plat Principal', 4, '2025-03-02', '2025-03-04', 'Halal', 2, 'couscous.jpg', 'Marocaine');
-
-INSERT INTO Ingredient (Nom, Prix) VALUES
-('Tomates', 2.50),
-('Semoule', 1.20);
-
-INSERT INTO ListeIngredients (IdIngredient, IdRecette, Quantite) VALUES
-(1, 1, 3),
-(2, 2, 2);
-
-INSERT INTO Commande (IdClient, DateCommande, Statut) VALUES
-(1, NOW(), 'En attente'),
-(2, NOW(), 'Validée'),
-(2, NOW(), 'Validée'),
-(2, NOW(), 'Validée'),
-(2, NOW(), 'Validée');
-
-INSERT INTO LigneDeCommande (IdCommande, IdPlat, Quantite, DateLivraison, LieuLivraison) VALUES
-(1, 1, 2, '2025-03-02', '10 rue de Paris'),
-(2, 2, 1, '2025-03-03', '15 avenue de Lyon'),
-(3, 2, 1, '2025-03-03', '15 avenue de Lyon'),
-(4, 2, 1, '2025-03-03', '15 avenue de Lyon'),
-(5, 2, 1, '2025-03-03', '15 avenue de Lyon');
-
-INSERT INTO Livraison (IdLigneCommande, IdLivreur, IdStationDepart, IdStationArrivee, Statut) VALUES
-(1, 1, 1, 2, 'En attente'),
-(2, 1, 2, 1, 'En cours'),
-(3, 1, 2, 1, 'Livrée'),
-(4, 1, 2, 1, 'Livrée'),
-(5, 2, 2, 1, 'Livrée');
-
-INSERT INTO Ligne (Nom) VALUES
-('Ligne 1'),
-('Ligne 14');
-
-INSERT INTO Correspondance (IdStation, IdLigne) VALUES
-(1, 1),
-(2, 2);
-
-INSERT INTO Transaction (IdCommande, Montant, Reussie, DateTransaction) VALUES
-(1, 25.00, TRUE, NOW()),
-(2, 15.00, TRUE, NOW());
-
-
-
-
-
+-- Peuple la table Commande
+INSERT INTO Commande (idCommande, statut, prix, idCuisinier, depart, arrive, dateCo, idClient, IdPlat) VALUES
+('CMD1', 'En cours', 25.0, 'C1', 'Station A', 'Station B', NOW(), 'CL1', 'P1'),
+('CMD2', 'Livrée', 40.0, 'C1', 'Station A', 'Station C', NOW(), 'CL2', 'P1'),
+('CMD3', 'En cours', 30.0, 'C2', 'Station B', 'Station D', NOW(), 'CL3', 'P2'),
+('CMD4', 'Annulée', 20.0, 'C2', 'Station B', 'Station E', NOW(), 'CL4', 'P2'),
+('CMD5', 'Livrée', 50.0, 'C3', 'Station C', 'Station A', NOW(), 'CL5', 'P3'),
+('CMD6', 'En cours', 60.0, 'C4', 'Station D', 'Station B', NOW(), 'CL1', 'P4'),
+('CMD7', 'Livrée', 55.0, 'C5', 'Station E', 'Station C', NOW(), 'CL2', 'P5'),
+('CMD8', 'En cours', 45.0, 'C5', 'Station E', 'Station D', NOW(), 'CL3', 'P5'),
+('CMD9', 'Annulée', 35.0, 'C3', 'Station C', 'Station E', NOW(), 'CL4', 'P3'),
+('CMD10', 'Livrée', 70.0, 'C4', 'Station D', 'Station A', NOW(), 'CL5', 'P4');

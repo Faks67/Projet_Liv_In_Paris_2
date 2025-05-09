@@ -7,7 +7,10 @@ public class Graphe<T>
     private Dictionary<int, Noeud<int>> noeuds;
     private List<Lien<int>> liens;
     private Dictionary<int, string> stationsParId;
-    public List<Liaison> liaisons { get; set; }
+    public List<Lien> liaisons { get; set; }
+    private Dictionary<int, string> lignesParStation = new Dictionary<int, string>();
+    public Dictionary<int, List<int>> Adjacence { get; set; } = new();
+
 
 
     public Graphe()
@@ -17,11 +20,11 @@ public class Graphe<T>
         stationsParId = new Dictionary<int, string>();
     }
 
-    public class Liaison
+    public class Lien
     {
         public int Source { get; set; }
         public int Destination { get; set; }
-        public double Poids { get; set; }  // Par exemple, le temps ou la distance
+        public double Poids { get; set; }  
     }
 
 
@@ -29,7 +32,10 @@ public class Graphe<T>
     {
         return nom.ToLower().Trim().Replace(",", ".");
     }
-
+    /// <summary>
+    /// méthode afin de lire le fichier excel, on se base sur les collones et on applique les liaisons
+    /// </summary>
+    /// <param name="cheminFichier"></param>
     public void ChargerDepuisExcel(string cheminFichier)
     {
         try
@@ -44,34 +50,30 @@ public class Graphe<T>
 
             using (var package = new ExcelPackage(new FileInfo(cheminFichier)))
             {
-                // Charger la première feuille du fichier Excel
                 var feuille = package.Workbook.Worksheets[0];
-
                 int nbLignes = feuille.Dimension.Rows;
 
-                // Initialiser le dictionnaire pour gérer les stations par nom
                 Dictionary<string, List<int>> stationsParNom = new Dictionary<string, List<int>>();
+                Dictionary<int, string> lignesParStation = new Dictionary<int, string>(); 
 
-                // Charger les stations et les liaisons depuis le fichier Excel
-                for (int i = 2; i <= nbLignes; i++) // Assumer que la première ligne est un en-tête
+                for (int i = 2; i <= nbLignes; i++) 
                 {
                     int idStation = int.Parse(feuille.Cells[i, 1].Text);
+                    string ligne = feuille.Cells[i, 2].Text.Trim(); 
                     string nomStation = NormaliserNom(feuille.Cells[i, 3].Text);
 
                     if (string.IsNullOrWhiteSpace(nomStation))
                         continue;
 
-                    // Ajouter les stations à la collection avec leurs noms
                     stationsParId[idStation] = nomStation;
+                    lignesParStation[idStation] = ligne; 
 
-                    // Ajouter les stations au dictionnaire par nom
                     if (!stationsParNom.ContainsKey(nomStation))
                     {
                         stationsParNom[nomStation] = new List<int>();
                     }
-                    stationsParNom[nomStation].Add(idStation); // Associer chaque nom à plusieurs IDs
+                    stationsParNom[nomStation].Add(idStation);
 
-                    // Extraire et convertir les valeurs latitude et longitude
                     string longitudeStr = feuille.Cells[i, 4].Text.Replace(",", ".").Trim();
                     string latitudeStr = feuille.Cells[i, 5].Text.Replace(",", ".").Trim();
 
@@ -79,285 +81,300 @@ public class Graphe<T>
                         !double.TryParse(longitudeStr, NumberStyles.Float, CultureInfo.InvariantCulture, out double longitude))
                     {
                         Console.WriteLine($"❌ Erreur conversion (ligne {i}) : Latitude: '{latitudeStr}', Longitude: '{longitudeStr}'");
-                        continue; // Passe à la ligne suivante si la conversion échoue
+                        continue;
                     }
 
-                    // Ajouter la station au dictionnaire de noeuds
                     noeuds[idStation] = new Noeud<int>(idStation, latitude, longitude);
                 }
 
-                // Charger les liaisons (arcs) depuis les colonnes 8 (ID précédent), 9 (ID suivant) et 12 (Poids)
                 for (int i = 2; i <= nbLignes; i++)
                 {
-                    int idPrecedent = int.Parse(feuille.Cells[i, 8].Text);  // ID de la station précédente (colonne 8)
-                    int idSuivant = int.Parse(feuille.Cells[i, 9].Text);    // ID de la station suivante (colonne 9)
-                    double poids = double.Parse(feuille.Cells[i, 12].Text, CultureInfo.InvariantCulture);  // Poids de la liaison (colonne 12)
+                    if (!int.TryParse(feuille.Cells[i, 8].Text, out int idPrecedent) ||
+                        !int.TryParse(feuille.Cells[i, 9].Text, out int idSuivant) ||
+                        !double.TryParse(feuille.Cells[i, 12].Text, NumberStyles.Float, CultureInfo.InvariantCulture, out double poids))
+                    {
+                        continue;
+                    }
 
-                    // Si l'un des IDs est 0, il n'y a pas de liaison
                     if (idPrecedent == 0 || idSuivant == 0)
+                        continue;
+                   
+                    string nomStation = NormaliserNom(feuille.Cells[i, 3].Text);
+
+                    if (stationsParNom.ContainsKey(nomStation))
                     {
-                        continue; // Ignore cette ligne si il n'y a pas de liaison
+                        var idsStationNom = stationsParNom[nomStation];
+
+                        foreach (int idNom in idsStationNom)
+                        {
+                            if (stationsParId.ContainsKey(idPrecedent))
+                            {
+                                liens.Add(new Lien<int>(idPrecedent, idNom, poids));
+                                liens.Add(new Lien<int>(idNom, idPrecedent, poids));
+                            }
+
+                            if (stationsParId.ContainsKey(idSuivant))
+                            {
+                                liens.Add(new Lien<int>(idSuivant, idNom, poids));
+                                liens.Add(new Lien<int>(idNom, idSuivant, poids));
+                            }
+                        }
                     }
 
-                    // Vérifier si les deux stations existent dans le dictionnaire des stations
-                    if (stationsParId.ContainsKey(idPrecedent) && stationsParId.ContainsKey(idSuivant))
-                    {
-                        // Ajouter la liaison entre la station précédente et la suivante
-                        liens.Add(new Lien<int>(idPrecedent, idSuivant, poids));
-                        // Ajouter aussi la liaison bidirectionnelle : de la station suivante vers la station précédente
-                        liens.Add(new Lien<int>(idSuivant, idPrecedent, poids));
-                    }
                 }
 
-                // Ajouter des liaisons supplémentaires entre les stations avec des noms similaires (ou identiques)
                 foreach (var nom in stationsParNom.Keys)
                 {
                     var ids = stationsParNom[nom];
                     if (ids.Count > 1)
                     {
-                        // Relier chaque station ayant le même nom
                         for (int j = 0; j < ids.Count; j++)
                         {
                             for (int k = j + 1; k < ids.Count; k++)
                             {
                                 int id1 = ids[j];
                                 int id2 = ids[k];
-
-                                // Ici vous pouvez ajuster la logique de poids, par exemple en calculant la distance
                                 double poids = CalculerPoids(id1, id2);
 
-                                // Ajouter la liaison entre ces deux stations
                                 liens.Add(new Lien<int>(id1, id2, poids));
-                                liens.Add(new Lien<int>(id2, id1, poids));  // Bidirectionnel
+                                liens.Add(new Lien<int>(id2, id1, poids));
                             }
                         }
                     }
                 }
-            }
 
-            Console.WriteLine("✅ Chargement du graphe terminé !");
-            AfficherGraphe();
+                Console.WriteLine("✅ Chargement du graphe terminé !");
+                AfficherGraphe();
+            }
         }
         catch (Exception ex)
         {
             Console.WriteLine($"❌ Erreur lors du chargement de l'Excel : {ex.Message}");
         }
     }
-     
+
+    /// <summary>
+    /// cette méthode c'est juste pour ajouter des poids de 1 entre les stations de meme nom
+    /// </summary>
+    /// <param name="id1"></param>
+    /// <param name="id2"></param>
+    /// <returns></returns>
     private double CalculerPoids(int id1, int id2)
-{
-    return 1.0; // Poids constant pour toutes les connexions entre stations du même nom
-}
+    {
+        return 1.0; 
+    }
 
 
-    // Méthode pour afficher les stations et les liaisons dans la console
+    /// <summary>
+    /// avec cette méthode j'affiche les liaisons dans la console ainsi que les stations pour faciliter la  recherche et voir si il ne manque pas des liaisons
+    /// </summary>
     public void AfficherGraphe()
     {
-        // Affichage des stations
-        Console.WriteLine("\n📌 Liste des stations :");
-        foreach (var noeud in noeuds)
-        {
-            Console.WriteLine($"{noeud.Key}: {stationsParId[noeud.Key]}");
-        }
+      
 
-        // Affichage des liaisons
         Console.WriteLine("\n📌 Liste des liaisons :");
         foreach (var lien in liens)
         {
             Console.WriteLine($"{lien.Source} ({stationsParId[lien.Source]}) ↔ {lien.Destination} ({stationsParId[lien.Destination]}) (Poids : {lien.Poids})");
         }
+
+        Console.WriteLine("\n📌 Liste des stations :");
+        foreach (var noeud in noeuds)
+        {
+            Console.WriteLine($"{noeud.Key}: {stationsParId[noeud.Key]}");
+        }
     }
 
-    public void AfficherGrapheVisuel()
+
+    public void AfficherGrapheVisuel(List<int> chemin = null)
     {
-        // Définir les dimensions de l'image
         int largeur = 1600;
         int hauteur = 1200;
         Bitmap image = new Bitmap(largeur, hauteur);
         Graphics g = Graphics.FromImage(image);
-        g.Clear(Color.White); // Fond blanc
+        g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+        g.Clear(Color.White);
 
-        // Déterminer les limites des coordonnées
         double minLongitude = noeuds.Values.Min(n => n.Longitude);
         double maxLongitude = noeuds.Values.Max(n => n.Longitude);
         double minLatitude = noeuds.Values.Min(n => n.Latitude);
         double maxLatitude = noeuds.Values.Max(n => n.Latitude);
 
-        // Dictionnaire pour stocker les positions des stations
         Dictionary<int, PointF> positions = new Dictionary<int, PointF>();
 
         foreach (var noeud in noeuds)
         {
-            // Normalisation des coordonnées pour le placement sur l'image
             float x = (float)((noeud.Value.Longitude - minLongitude) / (maxLongitude - minLongitude) * (largeur - 100)) + 50;
-            float y = (float)((noeud.Value.Latitude - minLatitude) / (maxLatitude - minLatitude) * (hauteur - 100)) + 50;
-
+            float yOriginal = (float)((noeud.Value.Latitude - minLatitude) / (maxLatitude - minLatitude) * (hauteur - 100)) + 50;
+            float y = hauteur - yOriginal;
             positions[noeud.Key] = new PointF(x, y);
         }
 
-        // Police pour les noms des stations
-        Font font = new Font("Arial", 8, FontStyle.Bold);
-        Brush brush = Brushes.Blue;
+        Font font = new Font("Arial", 6, FontStyle.Bold);
+        Brush brushTexte = Brushes.Blue;
+        Brush brushStation = Brushes.DarkRed;
 
-        // Dessiner les stations avec leurs noms bien centrés
-        Dictionary<int, SizeF> taillesTextes = new Dictionary<int, SizeF>();
-
-        foreach (var noeud in noeuds)
-        {
-            if (positions.ContainsKey(noeud.Key))
-            {
-                PointF position = positions[noeud.Key];
-                string stationNom = stationsParId[noeud.Key];
-
-                // Mesurer la taille du texte pour centrer correctement
-                SizeF textSize = g.MeasureString(stationNom, font);
-                PointF textPosition = new PointF(position.X - textSize.Width / 2, position.Y - textSize.Height / 2);
-
-                // Enregistrer la taille pour l'ajustement des lignes
-                taillesTextes[noeud.Key] = textSize;
-
-                // Dessiner le nom de la station
-                g.DrawString(stationNom, font, brush, textPosition);
-            }
-        }
-
-        // Dessiner les liaisons entre les stations avec des traits plus fins
-        Pen penLiaison = new Pen(Color.Black, 1);  // Épaisseur plus fine
+        // 🎨 Couleurs officielles des lignes du métro parisien
+        Dictionary<string, Color> couleursParLigne = new Dictionary<string, Color>()
+    {
+        { "1", Color.FromArgb(255, 210, 0) },
+        { "2", Color.FromArgb(0, 164, 228) },
+        { "3", Color.FromArgb(184, 136, 52) },
+        { "3bis", Color.FromArgb(161, 202, 72) },
+        { "4", Color.FromArgb(155, 48, 108) },
+        { "5", Color.FromArgb(255, 121, 0) },
+        { "6", Color.FromArgb(118, 195, 208) },
+        { "7", Color.FromArgb(236, 100, 140) },
+        { "7bis", Color.FromArgb(132, 204, 202) },
+        { "8", Color.FromArgb(173, 79, 132) },
+        { "9", Color.FromArgb(201, 179, 0) },
+        { "10", Color.FromArgb(221, 155, 124) },
+        { "11", Color.FromArgb(167, 103, 38) },
+        { "12", Color.FromArgb(0, 125, 58) },
+        { "13", Color.FromArgb(142, 186, 229) },
+        { "14", Color.FromArgb(158, 77, 168) }
+    };
 
         foreach (var lien in liens)
         {
             if (positions.ContainsKey(lien.Source) && positions.ContainsKey(lien.Destination))
             {
+                string nomSource = stationsParId[lien.Source];
+                string nomDestination = stationsParId[lien.Destination];
+
+                if (nomSource == nomDestination)
+                    continue;
+
                 PointF pointSource = positions[lien.Source];
                 PointF pointDest = positions[lien.Destination];
 
-                // Dessiner une ligne fine entre les stations
-                g.DrawLine(penLiaison, pointSource, pointDest);
-            }
-        }
+                
+                bool estDansChemin = chemin != null &&
+                                     chemin.Contains(lien.Source) &&
+                                     chemin.Contains(lien.Destination) &&
+                                     Math.Abs(chemin.IndexOf(lien.Source) - chemin.IndexOf(lien.Destination)) == 1;
 
-        // Sauvegarde de l'image
-        string cheminImage = Path.Combine(Directory.GetCurrentDirectory(), "graphe_visuel.png");
-        image.Save(cheminImage, System.Drawing.Imaging.ImageFormat.Png);
-        Console.WriteLine($"✅ Image générée et sauvegardée : {cheminImage}");
-
-        // Libérer les ressources
-        g.Dispose();
-        image.Dispose();
-    }
-
-    public bool EstConnexe()
-    {
-        var visite = new HashSet<int>();
-        var stack = new Stack<int>();
-
-        // Commencer depuis un noeud arbitraire, ici le premier noeud
-        int noeudDepart = noeuds.Keys.First();
-        stack.Push(noeudDepart);
-
-        while (stack.Count > 0)
-        {
-            int current = stack.Pop();
-            if (!visite.Contains(current))
-            {
-                visite.Add(current);
-                var voisins = liens.Where(l => l.Source == current).Select(l => l.Destination);
-                foreach (var voisin in voisins)
+                if (estDansChemin)
                 {
-                    if (!visite.Contains(voisin))
+                    using (Pen pen = new Pen(Color.Red, 3))
                     {
-                        stack.Push(voisin);
+                        g.DrawLine(pen, pointSource, pointDest);
+                    }
+                    continue;
+                }
+
+                string ligneSource = lignesParStation.ContainsKey(lien.Source) ? lignesParStation[lien.Source] : null;
+                string ligneDest = lignesParStation.ContainsKey(lien.Destination) ? lignesParStation[lien.Destination] : null;
+
+                if (!string.IsNullOrEmpty(ligneSource) && ligneSource == ligneDest && couleursParLigne.ContainsKey(ligneSource))
+                {
+                    using (Pen pen = new Pen(couleursParLigne[ligneSource], 2))
+                    {
+                        g.DrawLine(pen, pointSource, pointDest);
+                    }
+                }
+                else
+                {
+                    using (Pen pen = new Pen(Color.LightGray, 1))
+                    {
+                        g.DrawLine(pen, pointSource, pointDest);
                     }
                 }
             }
         }
 
-        return visite.Count == noeuds.Count;
-    }
-    public void TrouverCheminPlusCourt(int depart, int arrivee)
-    {
-        if (!stationsParId.ContainsKey(depart) || !stationsParId.ContainsKey(arrivee))
+        foreach (var noeud in noeuds)
         {
-            Console.WriteLine("❌ Station de départ ou d'arrivée invalide.");
-            return;
-        }
-
-        if (!EstConnexe())
-        {
-            Console.WriteLine("❌ Le graphe n'est pas connexe. Impossible de garantir un chemin.");
-            return;
-        }
-
-        var (chemin, poidsTotal) = Dijkstra(depart, arrivee);
-        if (chemin.Count == 0)
-        {
-            Console.WriteLine("⚠️ Aucun chemin trouvé entre ces stations.");
-            return;
-        }
-
-        Console.WriteLine($"\n🚇 Chemin le plus court de {stationsParId[depart]} à {stationsParId[arrivee]} :");
-        Console.WriteLine($"Poids total du trajet : {poidsTotal} min");
-
-        for (int i = 0; i < chemin.Count; i++)
-        {
-            int station = chemin[i];
-            Console.Write(stationsParId[station]);
-            if (i < chemin.Count - 1)
+            if (positions.TryGetValue(noeud.Key, out PointF position))
             {
-                Console.Write(" → ");
+                float rayon = 5f;
+                g.FillEllipse(brushStation, position.X - rayon, position.Y - rayon, rayon * 2, rayon * 2);
+
+                string nom = stationsParId[noeud.Key];
+                g.DrawString(nom, font, brushTexte, position.X + 8, position.Y - 8);
             }
         }
-        Console.WriteLine();
+
+        string cheminImage = Path.Combine(Directory.GetCurrentDirectory(), "graphe_visuel.png");
+        image.Save(cheminImage, System.Drawing.Imaging.ImageFormat.Png);
+        Console.WriteLine($"✅ Image générée et sauvegardée : {cheminImage}");
+
+        g.Dispose();
+        image.Dispose();
     }
 
-    // Méthode Dijkstra à conserver
-    public (List<int>, double) Dijkstra(int depart, int arrivee)
+
+
+
+
+
+
+
+
+
+
+    /// <summary>
+    /// Dijkstra nous pertmet de calculer le chemin le plus court entre 2 stations. On applique la méthode de l'infini.
+    /// </summary>
+    /// <param name="depart"></param>
+    /// <param name="arrivee"></param>
+    /// <returns></returns>
+    public (List<int> chemin, double poidsTotal) Dijkstra(int depart, int arrivee)
     {
         var distances = new Dictionary<int, double>();
         var predecesseurs = new Dictionary<int, int>();
-        var nonVisites = new HashSet<int>(noeuds.Keys);
+        var queue = new PriorityQueue<int, double>();
+        var visites = new HashSet<string>(); /// On evite de revisiter une station de même nom
 
         foreach (var noeud in noeuds.Keys)
         {
-            distances[noeud] = double.MaxValue;
+            distances[noeud] = double.PositiveInfinity;
         }
+
         distances[depart] = 0;
+        queue.Enqueue(depart, 0);
 
-        // Utiliser une SortedSet avec un custom comparer pour gérer les distances
-        var priorityQueue = new SortedSet<Tuple<double, int>>(Comparer<Tuple<double, int>>.Create((x, y) => x.Item1.CompareTo(y.Item1)));
-        priorityQueue.Add(Tuple.Create(0.0, depart));
-
-        while (priorityQueue.Count > 0)
+        while (queue.Count > 0)
         {
-            var current = priorityQueue.Min;
-            priorityQueue.Remove(current);
-            double currentDist = current.Item1;  // Accès à la distance avec Item1
-            int u = current.Item2;  // Accès à l'ID du noeud avec Item2
+            int courant = queue.Dequeue();
+            string nomCourant = stationsParId[courant];
 
-            if (u == arrivee) break;
+            /// Cela empeche de revenir sur une station de même nom déjà quittée
+            if (visites.Contains(nomCourant))
+                continue;
 
-            foreach (var lien in liens.Where(l => l.Source == u))
+            visites.Add(nomCourant);
+
+            if (courant == arrivee)
+                break;
+
+            foreach (var voisin in liens.Where(l => l.Source == courant))
             {
-                int v = lien.Destination;
-                double alt = currentDist + lien.Poids;
+                int destination = voisin.Destination;
+                double nouveauPoids = distances[courant] + voisin.Poids;
 
-                if (alt < distances[v])
+                if (nouveauPoids < distances[destination])
                 {
-                    distances[v] = alt;
-                    predecesseurs[v] = u;
-                    priorityQueue.Add(Tuple.Create(distances[v], v));  // Ajouter avec la distance correcte
+                    distances[destination] = nouveauPoids;
+                    predecesseurs[destination] = courant;
+                    queue.Enqueue(destination, nouveauPoids);
                 }
             }
         }
 
-        var chemin = new List<int>();
-        int? actuel = arrivee;
-        while (actuel.HasValue && predecesseurs.ContainsKey(actuel.Value))
+        if (!predecesseurs.ContainsKey(arrivee))
+            return (null, double.PositiveInfinity); /// Aucun chemin trouvé
+
+        /// Reconstruction du chemin
+        List<int> chemin = new List<int>();
+        int actuel = arrivee;
+        while (actuel != depart)
         {
-            chemin.Insert(0, actuel.Value);
-            actuel = predecesseurs[actuel.Value];
+            chemin.Add(actuel);
+            actuel = predecesseurs[actuel];
         }
-        if (chemin.Count > 0) chemin.Insert(0, depart);
+        chemin.Add(depart);
+        chemin.Reverse();
 
         return (chemin, distances[arrivee]);
     }
@@ -365,24 +382,23 @@ public class Graphe<T>
 
 
 
+
     public (List<int>, double) BellmanFord(int source, int destination)
     {
-        // Initialisation des distances et des prédécesseurs
+        
         Dictionary<int, double> distances = new Dictionary<int, double>();
-        Dictionary<int, int> pred = new Dictionary<int, int>(); // Pour retrouver le chemin
+        Dictionary<int, int> pred = new Dictionary<int, int>();
         List<int> chemin = new List<int>();
 
-        // Initialisation des distances
+      
         foreach (var station in noeuds.Keys)
         {
             distances[station] = double.PositiveInfinity;
             pred[station] = -1;
         }
 
-        // La distance à la station source est 0
+      
         distances[source] = 0;
-
-        // Relaxation des arêtes (n-1) fois
         for (int i = 1; i < noeuds.Count; i++)
         {
             foreach (var lien in liaisons)
@@ -395,7 +411,6 @@ public class Graphe<T>
             }
         }
 
-        // Vérifier les cycles négatifs (facultatif ici)
         foreach (var lien in liaisons)
         {
             if (distances[lien.Source] + lien.Poids < distances[lien.Destination])
@@ -404,8 +419,6 @@ public class Graphe<T>
                 return (null, double.PositiveInfinity);
             }
         }
-
-        // Reconstruire le chemin depuis la destination jusqu'à la source
         int current = destination;
         while (current != -1)
         {
@@ -413,7 +426,7 @@ public class Graphe<T>
             current = pred[current];
         }
 
-        // Retourner le chemin et la distance
+  
         return (chemin, distances[destination]);
     }
 
@@ -425,7 +438,7 @@ public class Graphe<T>
         int[] ids = noeuds.Keys.ToArray();
         Dictionary<int, int> indexMap = ids.Select((id, index) => new { id, index }).ToDictionary(x => x.id, x => x.index);
 
-        // Initialisation de la matrice des distances
+       
         double[,] distances = new double[n, n];
 
         for (int i = 0; i < n; i++)
@@ -437,7 +450,6 @@ public class Graphe<T>
             }
         }
 
-        // Remplissage avec les valeurs initiales des liens
         foreach (var lien in liens)
         {
             int u = indexMap[lien.Source];
@@ -445,7 +457,6 @@ public class Graphe<T>
             distances[u, v] = lien.Poids;
         }
 
-        // Algorithme de Floyd-Warshall
         for (int k = 0; k < n; k++)
         {
             for (int i = 0; i < n; i++)
@@ -465,7 +476,67 @@ public class Graphe<T>
 
     public string GetStationNom(int idStation)
     {
-        // Supposons que tu as un dictionnaire des stations
+        
         return stationsParId.ContainsKey(idStation) ? stationsParId[idStation] : "Station inconnue";
     }
+
+    public (List<int> chemin, double poidsTotal) TrouverUnChemin(int depart, int arrivee)
+    {
+        HashSet<int> visites = new HashSet<int>();
+        HashSet<string> nomsVisites = new HashSet<string>();
+        List<int> chemin = new List<int>();
+        double poidsTotal = 0;
+
+        bool trouve = DFS(depart, arrivee, visites, nomsVisites, chemin, ref poidsTotal, null);
+        return trouve ? (chemin, poidsTotal) : (null, 0);
+    }
+
+    private bool DFS(int courant, int cible, HashSet<int> visites, HashSet<string> nomsVisites, List<int> chemin, ref double poidsTotal, string dernierNom)
+    {
+        visites.Add(courant);
+        chemin.Add(courant);
+
+        string nomCourant = stationsParId.ContainsKey(courant) ? stationsParId[courant] : "";
+        string nomNormalise = NormaliserNom(nomCourant);
+
+       
+        bool ajoutNom = false;
+        if (nomNormalise != dernierNom && nomsVisites.Contains(nomNormalise))
+        {
+          
+            chemin.RemoveAt(chemin.Count - 1);
+            visites.Remove(courant);
+            return false;
+        }
+        if (nomNormalise != dernierNom && !nomsVisites.Contains(nomNormalise))
+        {
+            nomsVisites.Add(nomNormalise);
+            ajoutNom = true;
+        }
+
+        if (courant == cible)
+            return true;
+
+        foreach (var lien in liens.Where(l => l.Source == courant))
+        {
+            if (!visites.Contains(lien.Destination))
+            {
+                double poidsLien = lien.Poids;
+                poidsTotal += poidsLien;
+
+                if (DFS(lien.Destination, cible, visites, nomsVisites, chemin, ref poidsTotal, nomNormalise))
+                    return true;
+
+                poidsTotal -= poidsLien; 
+            }
+        }
+
+        if (ajoutNom) nomsVisites.Remove(nomNormalise);
+        chemin.RemoveAt(chemin.Count - 1);
+        visites.Remove(courant);
+        return false;
+    }
+
+
+
 }
