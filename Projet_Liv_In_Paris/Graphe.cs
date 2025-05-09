@@ -1,6 +1,7 @@
 using OfficeOpenXml;
 using System.Drawing;
 using System.Globalization;
+using MySql.Data.MySqlClient;
 
 public class Graphe<T>
 {
@@ -536,7 +537,33 @@ public class Graphe<T>
         visites.Remove(courant);
         return false;
     }
+        public static List<Tuple<string, string, List<string>>> CreaList(MySqlConnection conn)
+    {
+             string query = @"SELECT c.nom AS NomCuisinier, c.prenom AS PrenomCuisinier, cl.nom AS NomClient, cl.prenom AS PrenomClient FROM Cuisinier c JOIN Commande co ON c.idCuisinier = co.idCuisinier JOIN Client cl ON co.idClient = cl.idClient ORDER BY c.nom, c.prenom, cl.nom, cl.prenom;";
+            var cmd = new MySqlCommand(query, conn);
+            var reader = cmd.ExecuteReader();
 
+            List<Tuple<string, string, List<string>>> ListecuisinierClient = new List<Tuple<string, string, List<string>>>();
+
+
+            while (reader.Read())
+            {
+                string cuisinierNom = reader["NomCuisinier"].ToString();
+                string cuisinierPrenom = reader["PrenomCuisinier"].ToString();
+                string clientNomPrenom = reader["NomClient"].ToString() + " " + reader["PrenomClient"].ToString();
+
+                var cuisinierTuple = ListecuisinierClient.Find(c => c.Item1 == cuisinierNom && c.Item2 == cuisinierPrenom);
+
+                if (cuisinierTuple == null)
+                {
+                    cuisinierTuple = new Tuple<string, string, List<string>>(cuisinierNom, cuisinierPrenom, new List<string>());
+                    ListecuisinierClient.Add(cuisinierTuple);
+                }
+
+                cuisinierTuple.Item3.Add(clientNomPrenom);
+            }
+        return ListecuisinierClient;
+    }
 
 
 }
