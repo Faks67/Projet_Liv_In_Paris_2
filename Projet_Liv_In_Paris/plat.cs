@@ -9,33 +9,21 @@ public class Plat
     /// <param name="conn"></param>
     public void AjouterPlat(string idCuisinier, MySqlConnection conn)
     {
-        Console.Write("Entrez l'ID du plat : ");
-        string idPlat = Console.ReadLine();
-
-        Console.Write("Entrez le type du plat : ");
-        string typePlat = Console.ReadLine();
-
-        Console.Write("Entrez la quantité : ");
-        int quantite = int.Parse(Console.ReadLine());
-
-        Console.Write("Entrez la nationalité du plat : ");
-        string nationalite = Console.ReadLine();
-
-        Console.Write("Entrez le régime spécial (ou 'Aucun') : ");
-        string regimeSpe = Console.ReadLine();
-
-        Console.Write("Entrez l'ingrédient principal : ");
-        string ingrediantPrin = Console.ReadLine();
-
-        Console.Write("Entrez le prix du plat : ");
-        if (!float.TryParse(Console.ReadLine(), out float prix))
+        string idPlat = Saisie.Texte("Entrez l'ID du plat (ex : P6) : ");
+        while (Existe(idPlat, conn))
         {
-            Console.WriteLine("Erreur : Veuillez entrer un prix valide.");
-            return;
+            Console.WriteLine("Cet ID de plat existe déjà, choisissez-en un autre.");
+            idPlat = Saisie.Texte("Entrez l'ID du plat (ex : P6) : ");
         }
+        string typePlat = Saisie.Texte("Entrez le nom du plat : ");
+        int quantite = Saisie.Entier("Entrez la quantité (nombre de portions) : ");
+        string nationalite = Saisie.Texte("Entrez la nationalité du plat : ");
+        string regimeSpe = Saisie.Texte("Entrez le régime spécial (ou 'Aucun') : ");
+        string ingrediantPrin = Saisie.Texte("Entrez l'ingrédient principal : ");
+        float prix = Saisie.Decimal("Entrez le prix d'une portion : ");
+        int joursConservation = Saisie.Entier("Le plat se conserve combien de jours ? ");
 
-        string query = "INSERT INTO Plat (IdPlat, TypePlat, Quantité, Nationalité, RegimeSpe, IngrediantPrin, DateFabrication, DatePeremption, prix, idCuisinier) VALUES (@IdPlat, @TypePlat, @Quantite, @Nationalite, @RegimeSpe, @IngrediantPrin,NOW(), Now(), @Prix, @id)";
-
+        string query = "INSERT INTO Plat (IdPlat, TypePlat, Quantité, Nationalité, RegimeSpe, IngrediantPrin, DateFabrication, DatePeremption, prix, idCuisinier) VALUES (@IdPlat, @TypePlat, @Quantite, @Nationalite, @RegimeSpe, @IngrediantPrin, NOW(), DATE_ADD(NOW(), INTERVAL @jours DAY), @Prix, @id)";
         using var cmd = new MySqlCommand(query, conn);
         cmd.Parameters.AddWithValue("@IdPlat", idPlat);
         cmd.Parameters.AddWithValue("@TypePlat", typePlat);
@@ -43,28 +31,44 @@ public class Plat
         cmd.Parameters.AddWithValue("@Nationalite", nationalite);
         cmd.Parameters.AddWithValue("@RegimeSpe", regimeSpe);
         cmd.Parameters.AddWithValue("@IngrediantPrin", ingrediantPrin);
+        cmd.Parameters.AddWithValue("@jours", joursConservation);
         cmd.Parameters.AddWithValue("@Prix", prix);
         cmd.Parameters.AddWithValue("@id", idCuisinier);
         cmd.ExecuteNonQuery();
         Console.WriteLine("Plat ajouté");
     }
+    /// <summary>
+    /// Vérifie qu'un plat existe
+    /// </summary>
+    public bool Existe(string idPlat, MySqlConnection conn)
+    {
+        using var cmd = new MySqlCommand("SELECT COUNT(*) FROM Plat WHERE IdPlat = @id", conn);
+        cmd.Parameters.AddWithValue("@id", idPlat);
+        return Convert.ToInt32(cmd.ExecuteScalar()) > 0;
+    }
+    /// <summary>
+    /// Affiche les plats disponibles (avec leur ID pour pouvoir les commander)
+    /// </summary>
     public void AfficherPlat(MySqlConnection conn)
     {
-        var cmd = new MySqlCommand("SELECT TypePlat,Quantité,Nationalité,RegimeSpe,IngrediantPrin,DateFabrication,DatePeremption,Prix FROM Plat", conn);
-            var reader = cmd.ExecuteReader();
-            Console.WriteLine("Plat   Quantité Nationalité Regime Speciale Ingredient Principale Date de Fabrication Date Peremption       Prix");
-            while (reader.Read())
-            {
-                Console.WriteLine($"{reader["TypePlat"]}   {reader["Quantité"]}     {reader["Nationalité"]}         {reader["RegimeSpe"]}            {reader["IngrediantPrin"]}          {reader["DateFabrication"]} {reader["DatePeremption"]}    {reader["Prix"]}");
-            }
+        string query = "SELECT p.IdPlat, p.TypePlat, p.Quantité, p.Nationalité, p.RegimeSpe, p.IngrediantPrin, p.DatePeremption, p.prix, c.prenom, c.nom " +
+                       "FROM Plat p JOIN Cuisinier c ON p.idCuisinier = c.idCuisinier ORDER BY p.IdPlat";
+        using var cmd = new MySqlCommand(query, conn);
+        using var reader = cmd.ExecuteReader();
+        if (!reader.HasRows)
+        {
+            Console.WriteLine("Aucun plat disponible pour le moment.");
+            return;
+        }
+        Console.WriteLine($"{"ID",-6}{"Plat",-14}{"Portions",-10}{"Nationalité",-13}{"Régime",-10}{"Ingrédient",-12}{"Périme le",-12}{"Prix",-8}Cuisinier");
+        while (reader.Read())
+        {
+            string peremption = Convert.ToDateTime(reader["DatePeremption"]).ToString("dd/MM/yyyy");
+            Console.WriteLine($"{reader["IdPlat"],-6}{reader["TypePlat"],-14}{reader["Quantité"],-10}{reader["Nationalité"],-13}{reader["RegimeSpe"],-10}{reader["IngrediantPrin"],-12}{peremption,-12}{reader["prix"] + " €",-8}{reader["prenom"]} {reader["nom"]}");
+        }
     }
     public void AfficherCuisiniersAlphabetique(MySqlConnection conn)
     {
-            var cmd = new MySqlCommand("SELECT * FROM Cuisinier", conn);
-            var reader = cmd.ExecuteReader();
-            while (reader.Read())
-            {
-                Console.WriteLine($"ID: {reader["idCuisinier"]}, Nom : {reader["nom"]}, Adresse: {reader["adresse"]}");
-            }
+        new Cuisinier().AfficherCuisiniersAlphabetique(conn);
     }
 }

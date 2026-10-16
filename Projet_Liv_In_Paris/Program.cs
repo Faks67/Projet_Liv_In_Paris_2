@@ -1,380 +1,379 @@
 ﻿using System;
-using System.Collections;
-using System.Diagnostics.CodeAnalysis;
-using System.Runtime.ConstrainedExecution;
+using System.Diagnostics;
 using MySql.Data.MySqlClient;
-using Org.BouncyCastle.Bcpg.Sig;
-using Org.BouncyCastle.Utilities.IO;
 
 class Program
 {
+    private static Graphe<int>? grapheMetro;
+
     static void Main()
     {
-        Console.WriteLine("Que souhaitez vous faire?\n1 - Acceder au graphes\n2 - Acceder au SQL\nQuittez ");
-        string pressed = Console.ReadLine();
-
-        switch (pressed)
+        while (true)
         {
-            case "1":
-            Graphes();
-            break;
-            case "2":
-            SQL();
-            break;
-            default :
-            Environment.Exit(0);
-            break;
-        }
-        }
-        public static void Graphes()
-        {
-            Console.WriteLine(" Chargement du fichier Excel...");
-            Graphe<int> graphe = new Graphe<int>(); 
-            string cheminFichier = "C:/Users/alexa/Documents/Esilv/A2/S2/PB scientifique et informatique/Projet_Liv_In_Paris/Projet_Liv_In_Paris/Metro_GareFinal.xlsx";           
-            graphe.ChargerDepuisExcel(cheminFichier);
-            Console.WriteLine("\nStations chargées :");
-            Console.WriteLine("\n Génération du graphe visuel...");
-            graphe.AfficherGrapheVisuel();
-            Console.WriteLine(" Graphe visuel généré avec succès !");
-            Console.WriteLine("\n Entrez l'ID de la station de départ : ");
-            int idDepart = int.Parse(Console.ReadLine());
-            Console.WriteLine(" Entrez l'ID de la station d'arrivée : ");
-            int idArrivee = int.Parse(Console.ReadLine());
-
-
-            var (chemin, poids) = graphe.Dijkstra(idDepart, idArrivee);
-
-            if (chemin != null)
+            Console.WriteLine("\n===== Liv'In Paris =====");
+            Console.WriteLine("1 - Accéder aux graphes (métro)\n2 - Accéder au SQL\n0 - Quitter");
+            switch (Saisie.Texte("Votre choix : "))
             {
-                string nomDepart = graphe.GetStationNom(idDepart);
-                string nomArrivee = graphe.GetStationNom(idArrivee);
-                Console.WriteLine($"\n Le chemin le plus court entre {nomDepart} et {nomArrivee} :");
-                foreach (int id in chemin)
-                    Console.WriteLine($"{id}: {graphe.GetStationNom(id)}");
-
-                Console.WriteLine($" Poids total du trajet : {poids}");
-                graphe.AfficherGrapheVisuel(chemin);
+                case "1":
+                    Executer(Graphes);
+                    break;
+                case "2":
+                    SQL();
+                    break;
+                case "0":
+                    return;
+                default:
+                    Console.WriteLine("Choix invalide.");
+                    break;
             }
-            else
-            {
-                string nomDepart = graphe.GetStationNom(idDepart);
-                string nomArrivee = graphe.GetStationNom(idArrivee);
-                Console.WriteLine($" Aucune route trouvée entre {nomDepart} et  {nomArrivee}.");
-            }
-            Console.WriteLine("Si vous voulez avoir le graphe des liens entre clients et cuisiniez, appuyer sur 1");
-            if(Console.ReadLine() == "1"){
-            graphe.test();
-            }
-            Environment.Exit(0);
-        }
-        public static void SQL()
-        {
-            MySqlConnection conn = Database.GetConnection();
-        conn.Open();
-        Console.WriteLine("Que souhaitez vous faire?\n1 - Se connecter en mode client\n2 - Se connecter en mode cuisinier\n3 - Se connecter en mode Admin\nQuittez ");
-        string pressed = Console.ReadLine();
-
-        switch (pressed)
-        {
-            case "1" : 
-            VerClient(conn);
-            break;
-            case "2":
-            VerCuisinier(conn);
-            break;
-            case "3" : 
-            Admin(conn);
-            break;
-            default :
-            Environment.Exit(0);
-            break;
-        }
-        conn.Close();
-        }
-
-        public static void Admin(MySqlConnection conn)
-        {
-        Console.WriteLine("Que souhaitez vous faire?\n1 - Gestion des clients\n2 - Gestion des cuisiniers\n3 - Gestion des commandes\n4 - Statistique\n5 - Exporter les bases de données\nQuittez ");
-        string pressed = Console.ReadLine();
-
-        switch (pressed)
-        {
-            case "1" : 
-            GestionClient(conn);
-            break;
-            case "2":
-            GestionCuisinier(conn);
-            break;
-            case "3" : 
-            GestionCommande(conn);
-            break;
-            case "4":
-            Statistique(conn);
-            break;
-            case "5":
-            Export(conn);
-            break;
-            default:
-            Environment.Exit(0);
-            conn.Close();
-            break;
         }
     }
+
+    /// <summary>
+    /// Lance une action et affiche un message clair en cas d'erreur au lieu de fermer le programme
+    /// </summary>
+    static void Executer(Action action)
+    {
+        try
+        {
+            action();
+        }
+        catch (MySqlException ex) when (ex.Number == 1062)
+        {
+            Console.WriteLine("Erreur : cet identifiant existe déjà.");
+        }
+        catch (MySqlException ex) when (ex.Number == 1452)
+        {
+            Console.WriteLine("Erreur : un des identifiants saisis (client, cuisinier ou plat) n'existe pas.");
+        }
+        catch (MySqlException ex) when (ex.Number == 1451)
+        {
+            Console.WriteLine("Erreur : cet élément est encore utilisé ailleurs (par exemple dans une commande).");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Erreur : " + ex.Message);
+        }
+    }
+
+    /// <summary>
+    /// Charge le graphe du métro une seule fois
+    /// </summary>
+    static Graphe<int> GetGrapheMetro()
+    {
+        if (grapheMetro == null)
+        {
+            Console.WriteLine(" Chargement du fichier Excel...");
+            grapheMetro = new Graphe<int>();
+            grapheMetro.ChargerDepuisExcel(Path.Combine(AppContext.BaseDirectory, "Metro_GareFinal.xlsx"));
+        }
+        return grapheMetro;
+    }
+
+    /// <summary>
+    /// Ouvre une image avec la visionneuse de Windows
+    /// </summary>
+    static void OuvrirImage(string nomFichier)
+    {
+        string chemin = Path.Combine(Directory.GetCurrentDirectory(), nomFichier);
+        if (!File.Exists(chemin)) return;
+        if (Console.IsInputRedirected)
+        {
+            // Exécution automatisée (tests) : on n'ouvre pas de fenêtre
+            Console.WriteLine($"Image enregistrée : {chemin}");
+            return;
+        }
+        try
+        {
+            Process.Start(new ProcessStartInfo(chemin) { UseShellExecute = true });
+        }
+        catch
+        {
+            Console.WriteLine($"Image disponible ici : {chemin}");
+        }
+    }
+
+    /// <summary>
+    /// Calcule et dessine le plus court chemin entre deux stations
+    /// </summary>
+    static void AfficherTrajet(Graphe<int> graphe, int idDepart, int idArrivee)
+    {
+        string nomDepart = graphe.GetStationNom(idDepart);
+        string nomArrivee = graphe.GetStationNom(idArrivee);
+        var (chemin, poids) = graphe.Dijkstra(idDepart, idArrivee);
+        if (chemin != null)
+        {
+            Console.WriteLine($"\n Le chemin le plus court entre {nomDepart} et {nomArrivee} :");
+            foreach (int id in chemin)
+                Console.WriteLine($"{id}: {graphe.GetStationNom(id)}");
+            Console.WriteLine($" Poids total du trajet : {poids}");
+            graphe.AfficherGrapheVisuel(chemin);
+            OuvrirImage("graphe_visuel.png");
+        }
+        else
+        {
+            Console.WriteLine($" Aucune route trouvée entre {nomDepart} et {nomArrivee}.");
+        }
+    }
+
+    static int LireIdStation(Graphe<int> graphe, string question)
+    {
+        while (true)
+        {
+            int id = Saisie.Entier(question);
+            if (graphe.GetStationNom(id) != "Station inconnue") return id;
+            Console.WriteLine("Cette station n'existe pas (les ID vont de 1 à 332).");
+        }
+    }
+
+    public static void Graphes()
+    {
+        Graphe<int> graphe = GetGrapheMetro();
+        Console.WriteLine("\n Génération du graphe visuel...");
+        graphe.AfficherGrapheVisuel();
+        Console.WriteLine(" Graphe visuel généré avec succès !");
+        OuvrirImage("graphe_visuel.png");
+        while (true)
+        {
+            Console.WriteLine("\n--- Graphes ---\n1 - Calculer un plus court chemin entre deux stations\n2 - Graphe des liens entre clients et cuisiniers (coloration)\n0 - Retour");
+            switch (Saisie.Texte("Votre choix : "))
+            {
+                case "1":
+                    int idDepart = LireIdStation(graphe, "\n Entrez l'ID de la station de départ : ");
+                    int idArrivee = LireIdStation(graphe, " Entrez l'ID de la station d'arrivée : ");
+                    AfficherTrajet(graphe, idDepart, idArrivee);
+                    break;
+                case "2":
+                    Executer(() =>
+                    {
+                        graphe.test();
+                        OuvrirImage("graphe_colore.png");
+                    });
+                    break;
+                case "0":
+                    return;
+                default:
+                    Console.WriteLine("Choix invalide.");
+                    break;
+            }
+        }
+    }
+
+    public static void SQL()
+    {
+        using MySqlConnection conn = Database.GetConnection();
+        try
+        {
+            conn.Open();
+        }
+        catch (MySqlException)
+        {
+            Console.WriteLine("Impossible de se connecter à la base de données.");
+            Console.WriteLine("Lancez d'abord demarrer_mysql.cmd (et laissez sa fenêtre ouverte), puis réessayez.");
+            return;
+        }
+        while (true)
+        {
+            Console.WriteLine("\n--- Connexion ---\n1 - Se connecter en mode client\n2 - Se connecter en mode cuisinier\n3 - Se connecter en mode Admin\n0 - Retour");
+            switch (Saisie.Texte("Votre choix : "))
+            {
+                case "1":
+                    Executer(() => VerClient(conn));
+                    break;
+                case "2":
+                    Executer(() => VerCuisinier(conn));
+                    break;
+                case "3":
+                    Admin(conn);
+                    break;
+                case "0":
+                    return;
+                default:
+                    Console.WriteLine("Choix invalide.");
+                    break;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Affiche un menu en boucle jusqu'à ce que l'utilisateur choisisse 0
+    /// </summary>
+    static void Menu(string titre, (string libelle, Action action)[] options)
+    {
+        while (true)
+        {
+            Console.WriteLine($"\n--- {titre} ---");
+            for (int i = 0; i < options.Length; i++)
+                Console.WriteLine($"{i + 1} - {options[i].libelle}");
+            Console.WriteLine("0 - Retour");
+            string choix = Saisie.Texte("Votre choix : ");
+            if (choix == "0") return;
+            if (int.TryParse(choix, out int n) && n >= 1 && n <= options.Length)
+                Executer(options[n - 1].action);
+            else
+                Console.WriteLine("Choix invalide.");
+        }
+    }
+
+    public static void Admin(MySqlConnection conn)
+    {
+        Menu("Admin", new (string, Action)[]
+        {
+            ("Gestion des clients", () => GestionClient(conn)),
+            ("Gestion des cuisiniers", () => GestionCuisinier(conn)),
+            ("Gestion des commandes", () => GestionCommande(conn)),
+            ("Statistiques", () => Statistique(conn)),
+            ("Exporter les bases de données", () => Export(conn)),
+        });
+    }
+
     public static void GestionClient(MySqlConnection conn)
     {
         Client client = new Client();
-        Console.WriteLine("Que souhaitez vous faire ?\n1 - Ajouter un client\n2 - Mofifier un client\n3 - Supprimer un client\n4 - Afficher les clients par ordre alphabetique\n5 - Affichier les clients par rue\n6 - Afficher les clients par le montant d'achat\nQuitter");
-        string choix = Console.ReadLine();
-        switch (choix)
+        Menu("Gestion des clients", new (string, Action)[]
         {
-            case "1" : 
-            client.AjouterClient(conn);
-            break;
-            case "2":
-            client.ModifierClient(conn);
-            break;
-            case "3" : 
-            client.SupprimerClient(conn);
-            break;
-            case "4":
-            client.AfficherClientsAlphabetique(conn);
-            break;
-            case "5" : 
-            client.AfficherClientsRue(conn);
-            break;
-            case "6" :
-            client.AfficherTotalCommandesParClient(conn);
-            break;
-            default:
-            Environment.Exit(0);
-            conn.Close();
-            break;
-        }
+            ("Ajouter un client", () => client.AjouterClient(conn)),
+            ("Modifier un client", () => client.ModifierClient(conn)),
+            ("Supprimer un client", () => client.SupprimerClient(conn)),
+            ("Afficher les clients par ordre alphabétique", () => client.AfficherClientsAlphabetique(conn)),
+            ("Afficher les clients par rue", () => client.AfficherClientsRue(conn)),
+            ("Afficher les clients par montant d'achat", () => client.AfficherTotalCommandesParClient(conn)),
+        });
     }
+
     public static void GestionCuisinier(MySqlConnection conn)
     {
         Cuisinier cuisinier = new Cuisinier();
-        Console.WriteLine("Que souhaitez vous faire ?\n1 - Ajouter un cuisinier\n2 - Mofifier un cuisinier\n3 - Supprimer un cuisinier\n4 - Afficher les clients servis par le cuisinier\n5 - Affichier les plats realisés\n6 - Afficher le plats le plus recent\n7 - Afficher les cuisiniers\nQuitter");
-        string choix = Console.ReadLine();
-        Plat plat = new Plat();
-        switch (choix)
+        Menu("Gestion des cuisiniers", new (string, Action)[]
         {
-            case "1":
-            cuisinier.AjouterCuisinier(conn);
-            break;
-            case "2":
-            cuisinier.ModifierCuisinier(conn);
-            break;
-            case "3":
-            cuisinier.SupprimerCuisinier(conn);
-            break;
-            case "4":
-            cuisinier.AfficherClient(conn);
-            break;
-            case "5":
-            cuisinier.platRealiser(conn);
-            break;
-            case"6":
-            cuisinier.platRecent(conn);
-            break;
-            case"7":
-            cuisinier.AfficherCuisiniersAlphabetique(conn);
-            break;
-            default : 
-            Environment.Exit(0);
-            conn.Close();
-            break;
-        }
+            ("Ajouter un cuisinier", () => cuisinier.AjouterCuisinier(conn)),
+            ("Modifier un cuisinier", () => cuisinier.ModifierCuisinier(conn)),
+            ("Supprimer un cuisinier", () => cuisinier.SupprimerCuisinier(conn)),
+            ("Afficher les clients servis par un cuisinier", () => cuisinier.AfficherClient(conn)),
+            ("Afficher les plats réalisés", () => cuisinier.platRealiser(conn)),
+            ("Afficher le plat le plus récent", () => cuisinier.platRecent(conn)),
+            ("Afficher les cuisiniers", () => cuisinier.AfficherCuisiniersAlphabetique(conn)),
+        });
     }
+
     public static void GestionCommande(MySqlConnection conn)
     {
         Commande commande = new Commande();
-        Console.WriteLine("Que souhaitez vois faire ?\n1 - Créer une commande\n2 - Afficher les commandes en cours\n3 - Afficher le prix d'une commande\nQuitter");
-        string choix = Console.ReadLine();
-        switch (choix)
+        Menu("Gestion des commandes", new (string, Action)[]
         {
-            case "2":
-            commande.AfficheCommande(conn);
-            break;
-            case "3":
-            commande.AfficheCommandePrix(conn);
-            break;
-            case "1":
-            commande.CreerCommande(conn);
-            break;
-            default :
-            Environment.Exit(0);
-            conn.Close();
-            break;
-        }
+            ("Créer une commande", () => commande.CreerCommande(conn)),
+            ("Afficher toutes les commandes", () => commande.AfficheCommande(conn)),
+            ("Afficher le prix d'une commande", () => commande.AfficheCommandePrix(conn)),
+        });
     }
+
     public static void Statistique(MySqlConnection conn)
     {
         statistique stat = new statistique();
-        Console.WriteLine("Que souhiatez vous faire?\n1 - Afficher les cuisiniers par nombres de livraison\n2 - Afficher les commandes durant une periode de temps\n3 - Afficher la moyenne des commandes\n4 - Affiche la moyenne des depenses client\n5 - Afficher la liste des plats par client selon la nationalité\n6 - Afficher la liste des plats par clients selon une periode\nQuitter");
-        string choix = Console.ReadLine();
-        switch (choix)
+        Menu("Statistiques", new (string, Action)[]
         {
-            case "1" : 
-            stat.AfficherNombreLivraisonsParCuisinier(conn);
-            break;
-            case "2":
-            stat.AfficherCommandesClientPeriode(conn);
-            break;
-            case "3" : 
-            stat.AfficherMoyennePrixCommandes(conn);
-            break;
-            case "4":
-            stat.AfficherMoyenneClients(conn);
-            break;
-            case "5" : 
-            stat.AfficherCommandesClientNationalite(conn);
-            break;
-            case "6":
-            stat.AfficherCommandesClientPeriode(conn);
-            break;
-            default :
-            Environment.Exit(0); 
-            conn.Close();
-            break;
-        }
+            ("Afficher les cuisiniers par nombre de livraisons", () => stat.AfficherNombreLivraisonsParCuisinier(conn)),
+            ("Afficher les commandes durant une période", () => stat.AfficherCommandesParPeriode(conn)),
+            ("Afficher la moyenne des commandes", () => stat.AfficherMoyennePrixCommandes(conn)),
+            ("Afficher la moyenne des dépenses client", () => stat.AfficherMoyenneClients(conn)),
+            ("Afficher les plats d'un client selon la nationalité", () => stat.AfficherCommandesClientNationalite(conn)),
+            ("Afficher les commandes d'un client sur une période", () => stat.AfficherCommandesClientPeriode(conn)),
+        });
     }
+
     public static void VerClient(MySqlConnection conn)
     {
-        string idClient ="";
         Plat plat = new Plat();
         Commande com = new Commande();
         Client client = new Client();
-        Console.WriteLine("Avez vous deja un compte ? (Y/N)");
-        string reponse = Console.ReadLine();
-        while (reponse != "Y" && reponse != "N"){
-            Console.WriteLine("Avez vous deja un compte ? (Y/N)");
-            reponse = Console.ReadLine();
-        }
-        if (reponse == "Y")
+        string idClient;
+        if (Saisie.OuiNon("Avez-vous déjà un compte ?"))
         {
-            Console.WriteLine("Quel est votre identifiant");
-            idClient = Console.ReadLine();
+            idClient = Saisie.Texte("Quel est votre ID client ? (ex : CL1) : ");
+            if (!client.Existe(idClient, conn))
+            {
+                Console.WriteLine("Aucun client avec cet ID.");
+                return;
+            }
         }
         else
         {
-            client.AjouterClient(conn);
+            idClient = client.AjouterClient(conn);
         }
-        Console.WriteLine("Que souhiatez vous faire?\n1 - Afficher les plats que vous pouvez commander\n2 - Commander un plat\n3 - Modifier vos informations\n4 - Afficher vos commandes en cours\nQuitter");
-        string choix = Console.ReadLine();
-        switch (choix)
+        Console.WriteLine($"Bienvenue, client {idClient} !");
+        Menu("Espace client", new (string, Action)[]
         {
-            case "1" : 
-            plat.AfficherPlat(conn);
-            break;
-            case "2":
-            com.CreerCommande(conn);
-            break;
-            case "3" :
-            client.ModifierClientParty(conn, idClient);
-            break;
-            case "4" :
-            com.AfficheCommandeClient(conn, idClient);
-            break;
-            default :
-            Environment.Exit(0); 
-            conn.Close();
-            break;
-        }
+            ("Afficher les plats que vous pouvez commander", () => plat.AfficherPlat(conn)),
+            ("Commander un plat", () => com.CreerCommande(conn, idClient)),
+            ("Modifier vos informations", () => client.ModifierClientParty(conn, idClient)),
+            ("Afficher vos commandes", () => com.AfficheCommandeClient(conn, idClient)),
+        });
     }
+
     public static void VerCuisinier(MySqlConnection conn)
     {
-        string idCuisinier = "";
         Plat plat = new Plat();
-        Graphe<int> graphe = new Graphe<int>();
         Commande com = new Commande();
         Cuisinier cuisinier = new Cuisinier();
-        Console.WriteLine("Avez vous deja un compte ? (Y/N)");
-        string reponse = Console.ReadLine();
-        while (reponse != "Y" && reponse != "N"){
-            Console.WriteLine("Avez vous deja un compte ? (Y/N)");
-            reponse = Console.ReadLine();
-        }
-        if (reponse == "Y")
+        string idCuisinier;
+        if (Saisie.OuiNon("Avez-vous déjà un compte ?"))
         {
-            Console.WriteLine("Quel est votre identifiant");
-            idCuisinier = Console.ReadLine();
+            idCuisinier = Saisie.Texte("Quel est votre ID cuisinier ? (ex : C1) : ");
+            if (!cuisinier.Existe(idCuisinier, conn))
+            {
+                Console.WriteLine("Aucun cuisinier avec cet ID.");
+                return;
+            }
         }
         else
         {
-            cuisinier.AjouterCuisinier(conn);
+            idCuisinier = cuisinier.AjouterCuisinier(conn);
         }
-        Console.WriteLine("Que souhiatez vous faire?\n1 - Creer un plat\n2 - Afficher vos commande en cours\n3 - Modifier vos informations\n4 - Simuler un trajet d'une commande\nQuitter");
-        string choix = Console.ReadLine();
-        switch (choix)
+        Console.WriteLine($"Bienvenue, cuisinier {idCuisinier} !");
+        Menu("Espace cuisinier", new (string, Action)[]
         {
-            case "1" : 
-            plat.AjouterPlat(idCuisinier, conn);
-            break;
-            case "2":
-            com.AfficheCommandeCuisinier(conn, idCuisinier);
-            break;
-            case "3" :
-            cuisinier.ModifierCuisinierParty(conn, idCuisinier);
-            break;
-            case "4":
-            Console.WriteLine("De quel commande souhaitez vous avoir la destination ? (entrer l'id de commande)");
-            com.AfficheCommandeCuisinier(conn, idCuisinier);
-            string cheminFichier = "C:/Users/alexa/Documents/Esilv/A2/S2/PB scientifique et informatique/Projet_Liv_In_Paris/Projet_Liv_In_Paris/Metro_GareFinal.xlsx";           
-            graphe.ChargerDepuisExcel(cheminFichier);
-            conn.Open();
-            string a = Console.ReadLine();
-            string depart = com.GetDepart(a, conn);
-            string arrive = com.GetArrive(a, conn);
-            int stationClient = graphe.GetStation(graphe.NormaliserNom(arrive));
-            int stationCuisinier = graphe.GetStation(graphe.NormaliserNom(depart));
-            Console.WriteLine(stationClient);
-            Console.WriteLine(stationCuisinier);
-            var (chemin, poids) = graphe.Dijkstra(stationCuisinier, stationClient);
-            if (chemin != null)
-            {
-                string nomDepart = graphe.GetStationNom(stationCuisinier);
-                string nomArrivee = graphe.GetStationNom(stationClient);
-                Console.WriteLine($"\n Le chemin le plus court entre {nomDepart} et {nomArrivee} :");
-                foreach (int id in chemin)
-                    Console.WriteLine($"{id}: {graphe.GetStationNom(id)}");
-
-                Console.WriteLine($" Poids total du trajet : {poids}");
-                graphe.AfficherGrapheVisuel(chemin);
-            }
-            else
-            {
-                string nomDepart = graphe.GetStationNom(stationCuisinier);
-                string nomArrivee = graphe.GetStationNom(stationClient);
-                Console.WriteLine($"Aucune route trouvée entre {nomDepart} et  {nomArrivee}.");
-            }
-            break;
-            default :
-            Environment.Exit(0); 
-            conn.Close();
-            break;
-        }
+            ("Créer un plat", () => plat.AjouterPlat(idCuisinier, conn)),
+            ("Afficher vos commandes", () => com.AfficheCommandeCuisinier(conn, idCuisinier)),
+            ("Modifier vos informations", () => cuisinier.ModifierCuisinierParty(conn, idCuisinier)),
+            ("Simuler le trajet d'une commande", () => SimulerTrajet(conn, idCuisinier)),
+        });
     }
-    public static void Export(MySqlConnection conn){
-        Console.WriteLine("Quel base de donnée voulez vous exportez ? (1 - client / 2 -cuisinier / 3 - plat / 4 - commande)");
-        string choix = Console.ReadLine();
-        switch (choix)
+
+    /// <summary>
+    /// Calcule le trajet en métro entre la station du cuisinier et celle du client pour une commande
+    /// </summary>
+    static void SimulerTrajet(MySqlConnection conn, string idCuisinier)
+    {
+        Commande com = new Commande();
+        com.AfficheCommandeCuisinier(conn, idCuisinier);
+        string idCommande = Saisie.Texte("De quelle commande souhaitez-vous le trajet ? (ID de commande) : ");
+        if (!com.Existe(idCommande, conn, idCuisinier))
         {
-            case "1" : 
-        DatabaseExporter.ExportToJson("Client", "C:/Users/alexa/Documents/Esilv/A2/S2/PB scientifique et informatique/Projet_Liv_In_Paris/Projet_Liv_In_Paris/client.json", conn);
-        break;
-        case "2":
-        DatabaseExporter.ExportToJson("Cuisinier", "C:/Users/alexa/Documents/Esilv/A2/S2/PB scientifique et informatique/Projet_Liv_In_Paris/Projet_Liv_In_Paris/cuisiniers.json", conn);            
-        break;
-        case "3":
-        DatabaseExporter.ExportToJson("Plat", "C:/Users/alexa/Documents/Esilv/A2/S2/PB scientifique et informatique/Projet_Liv_In_Paris/Projet_Liv_In_Paris/plats.json", conn);
-        break;
-        case "4":
-        DatabaseExporter.ExportToJson("Commande", "C:/Users/alexa/Documents/Esilv/A2/S2/PB scientifique et informatique/Projet_Liv_In_Paris/Projet_Liv_In_Paris/commandes.json", conn);
-        break;
-        default : 
-        Environment.Exit(0);
-        break;
+            Console.WriteLine("Cette commande n'existe pas ou ne vous appartient pas.");
+            return;
         }
+        string depart = com.GetDepart(idCommande, conn);
+        string arrive = com.GetArrive(idCommande, conn);
+        Graphe<int> graphe = GetGrapheMetro();
+        int stationCuisinier = graphe.GetStation(graphe.NormaliserNom(depart));
+        int stationClient = graphe.GetStation(graphe.NormaliserNom(arrive));
+        if (stationCuisinier == -1 || stationClient == -1)
+        {
+            string inconnue = stationCuisinier == -1 ? depart : arrive;
+            Console.WriteLine($"La station « {inconnue} » n'a pas été trouvée sur le plan du métro.");
+            return;
+        }
+        AfficherTrajet(graphe, stationCuisinier, stationClient);
+    }
+
+    public static void Export(MySqlConnection conn)
+    {
+        Menu("Export JSON", new (string, Action)[]
+        {
+            ("Exporter les clients", () => DatabaseExporter.ExportToJson("Client", Path.Combine(AppContext.BaseDirectory, "client.json"), conn)),
+            ("Exporter les cuisiniers", () => DatabaseExporter.ExportToJson("Cuisinier", Path.Combine(AppContext.BaseDirectory, "cuisiniers.json"), conn)),
+            ("Exporter les plats", () => DatabaseExporter.ExportToJson("Plat", Path.Combine(AppContext.BaseDirectory, "plats.json"), conn)),
+            ("Exporter les commandes", () => DatabaseExporter.ExportToJson("Commande", Path.Combine(AppContext.BaseDirectory, "commandes.json"), conn)),
+        });
     }
 }

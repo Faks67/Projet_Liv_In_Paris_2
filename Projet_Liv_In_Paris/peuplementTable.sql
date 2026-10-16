@@ -36,7 +36,7 @@ INSERT INTO Commande (idCommande, statut, prix, idCuisinier, depart, arrive, dat
 ('CMD2', 'Livrée', 40.0, 'C1', 'Châtelet', 'République', NOW(), 'CL2', 'P1'),
 ('CMD3', 'En cours', 30.0, 'C2', 'Gare du Nord', 'Belleville', NOW(), 'CL3', 'P2'),
 ('CMD4', 'Annulée', 20.0, 'C2', 'Gare du Nord', 'Gare de Lyon', NOW(), 'CL4', 'P2'),
-('CMD5', 'Livrée', 50.0, 'C3', 'SBastille', 'Place d’Italie', NOW(), 'CL5', 'P3'),
+('CMD5', 'Livrée', 50.0, 'C3', 'Bastille', 'Place d’Italie', NOW(), 'CL5', 'P3'),
 ('CMD6', 'En cours', 60.0, 'C4', 'Opéra', 'Barbès - Rochechouart', NOW(), 'CL1', 'P4'),
 ('CMD7', 'Livrée', 55.0, 'C5', 'Saint-Lazare', 'République', NOW(), 'CL2', 'P5'),
 ('CMD8', 'En cours', 45.0, 'C5', 'Saint-Lazare', 'Belleville', NOW(), 'CL3', 'P5'),

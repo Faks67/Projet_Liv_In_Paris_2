@@ -47,7 +47,7 @@ CREATE TABLE Particulier(
    addMail VARCHAR(50),
    CodePostal INT,
    Ville VARCHAR(50),
-   numTel INT,
+   numTel VARCHAR(20),
    Station VarChar(50),
    PRIMARY KEY(idClient),
    FOREIGN KEY(idClient) REFERENCES Client(idClient)
@@ -69,7 +69,7 @@ CREATE TABLE Cuisinier(
    addMail VARCHAR(50),
    adresse VARCHAR(50),
    CodePostal INT,
-   numTel INT,
+   numTel VARCHAR(20),
    Station VarChar(50),
    PRIMARY KEY(idCuisinier),
    UNIQUE(idUtilisateur),

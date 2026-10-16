@@ -550,8 +550,8 @@ public class Graphe<T>
         public List<Tuple<string, string, List<string>>> CreaList(MySqlConnection conn)
     {
              string query = @"SELECT c.nom AS NomCuisinier, c.prenom AS PrenomCuisinier, cl.nom AS NomClient, cl.prenom AS PrenomClient FROM Cuisinier c JOIN Commande co ON c.idCuisinier = co.idCuisinier JOIN Client cl ON co.idClient = cl.idClient ORDER BY c.nom, c.prenom, cl.nom, cl.prenom;";
-            var cmd = new MySqlCommand(query, conn);
-            var reader = cmd.ExecuteReader();
+            using var cmd = new MySqlCommand(query, conn);
+            using var reader = cmd.ExecuteReader();
 
             List<Tuple<string, string, List<string>>> ListecuisinierClient = new List<Tuple<string, string, List<string>>>();
 
@@ -576,16 +576,24 @@ public class Graphe<T>
     }
     public int GetStation(string stationCh)
     {
-        int? stationId = stationsParId.FirstOrDefault(pair => pair.Value == stationCh).Key;
-        if (stationId != 0)
+        // Comparaison sans accents, apostrophes, tirets ni espaces : "Place d’Italie" == "place d'italie"
+        string cle = CleStation(stationCh);
+        foreach (var pair in stationsParId)
         {
-            return Convert.ToInt32($"{stationId}");
+            if (CleStation(pair.Value) == cle) return pair.Key;
         }
-        else
+        return -1;
+    }
+    private static string CleStation(string nom)
+    {
+        string decompose = nom.ToLowerInvariant().Normalize(System.Text.NormalizationForm.FormD);
+        var sb = new System.Text.StringBuilder();
+        foreach (char c in decompose)
         {
-            return -1;
+            if (char.IsLetterOrDigit(c) && CharUnicodeInfo.GetUnicodeCategory(c) != UnicodeCategory.NonSpacingMark)
+                sb.Append(c);
         }
-
+        return sb.ToString();
     }
     public class Personne
 {
@@ -668,8 +676,9 @@ public class Graphe<T>
             new Personne(tuple.Item1, tuple.Item2),
             tuple.Item3.Select(c =>
             {
-                var noms = c.Split(' ');
-                return new Personne(noms[1], noms[0]);
+                // "Nom Prénom" : on coupe au premier espace
+                int espace = c.IndexOf(' ');
+                return espace < 0 ? new Personne(c, "") : new Personne(c.Substring(0, espace), c.Substring(espace + 1));
             }).ToList()
         )
     ).ToList();
@@ -741,7 +750,7 @@ public class Graphe<T>
     image.Dispose();
 }
     public void test(){
-        MySqlConnection conn = Database.GetConnection();
+        using MySqlConnection conn = Database.GetConnection();
             conn.Open();
             var relations = GetRelations(conn);
             var couleurs = ColorierWelshPowell(relations);
