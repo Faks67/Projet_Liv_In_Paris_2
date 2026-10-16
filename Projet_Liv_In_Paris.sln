@@ -5,6 +5,8 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Projet_Liv_In_Paris", "Projet_Liv_In_Paris\Projet_Liv_In_Paris.csproj", "{2D573E2F-DF27-4C81-AD3D-CB2F6618B0E0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LivInParis.Web", "LivInParis.Web\LivInParis.Web.csproj", "{D856088D-C6DA-4A53-A886-7C124E54CBD3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +20,9 @@ Global
 		{2D573E2F-DF27-4C81-AD3D-CB2F6618B0E0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2D573E2F-DF27-4C81-AD3D-CB2F6618B0E0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2D573E2F-DF27-4C81-AD3D-CB2F6618B0E0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D856088D-C6DA-4A53-A886-7C124E54CBD3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D856088D-C6DA-4A53-A886-7C124E54CBD3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D856088D-C6DA-4A53-A886-7C124E54CBD3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D856088D-C6DA-4A53-A886-7C124E54CBD3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
